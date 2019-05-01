@@ -1,0 +1,73 @@
+/**
+ * @file image_formater.h
+ * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @brief The header file of the ImageFormater class.
+ * @since 0.0.1
+ * 
+ * @copyright Copyright (c) 2019, Nguyen Quang, all rights reserved.
+ * 
+ */
+
+#ifndef _IMAGE_FORMATER_H_
+#define _IMAGE_FORMATER_H_
+
+#include <iostream>
+#include <string>
+#include <sstream>
+
+#include <boost/filesystem.hpp>
+
+#include <ros/ros.h>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/highgui/highgui.hpp>
+
+/**
+ * @brief A class to subscriber to an image topic and save images with specific format.
+ * 
+ * @since 0.0.1
+ * 
+ */
+class ImageFormater {
+   private:
+    ros::NodeHandle node;              //!< @brief The ros node handle. @since 0.0.1
+    ros::Subscriber image_subscriber;  //!< @brief The image subscriber. @since 0.0.1
+    float frame_rate;                  //!< @brief The frame rate. @since 0.0.1
+    std::string image_topic;           //!< @brief The image topic. @since 0.0.1
+    std::string save_directory;        //!< @brief The saving dicrectory. @since 0.0.1
+    int start_index;                   //!< @brief The start index. @since 0.0.1
+
+   public:
+    /**
+     * @brief Construct a new ImageFormater object.
+     * 
+     * @param[in] node The ros node handle.
+     * @since 0.0.1
+     */
+    ImageFormater(ros::NodeHandle node);
+
+    /**
+     * @brief Destroy the ImageFormater object.
+     * 
+     * @since 0.0.1
+     * 
+     */
+    ~ImageFormater();
+
+    /**
+     * @brief The compressed image callback function.
+     * 
+     * @param[in] msg The image message.
+     * @since 0.0.1
+     */
+    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& msg);
+
+    /**
+     * @brief Get the frame rate.
+     * 
+     * @return float The frame rate.
+     * @since 0.0.1
+     */
+    float get_frame_rate();
+};
+
+#endif /* _IMAGE_FORMATER_H_ */
