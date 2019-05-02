@@ -14,6 +14,7 @@ ImageFormater::ImageFormater(ros::NodeHandle node) {
     this->node = node;
     node.param<float>("frame_rate", frame_rate, 50.0f);
     node.param<std::string>("image_topic", image_topic, "image_raw");
+    node.param<int>("rotation", rotation, 0);
     node.param<std::string>("save_directory", save_directory, "images/");
     node.param<int>("start_index", start_index, 0);
 
@@ -37,6 +38,20 @@ ImageFormater::~ImageFormater() {
     ros::shutdown();
 }
 
+void ImageFormater::rotate_image(const cv::Mat src, cv::Mat& dst, int rotation) {
+    if (rotation == 1) {
+        cv::transpose(src, dst);
+        cv::flip(dst, dst, 1);
+    } else if (rotation == 2) {
+        cv::flip(src, dst, -1);
+    } else if (rotation == 3) {
+        cv::transpose(src, dst);
+        cv::flip(dst, dst, 0);
+    } else {
+        dst = src.clone();
+    }
+}
+
 void ImageFormater::compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& msg) {
     cv::Mat image;
     try {
@@ -46,6 +61,10 @@ void ImageFormater::compressed_image_callback(const sensor_msgs::CompressedImage
     }
     if (!image.data) {
         return;
+    }
+
+    if (rotation != 0) {
+        rotate_image(image, image, rotation);
     }
 
     std::stringstream ss;
@@ -64,7 +83,6 @@ void ImageFormater::compressed_image_callback(const sensor_msgs::CompressedImage
     ss << start_index << ".jpg";
     start_index++;
 
-    cv::flip(image, image, -1);
     cv::namedWindow("image", CV_WINDOW_AUTOSIZE);
     cv::imshow("image", image);
     cv::imwrite(ss.str(), image);

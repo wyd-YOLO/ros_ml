@@ -31,10 +31,12 @@ class ImageFormater {
    private:
     ros::NodeHandle node;              //!< @brief The ros node handle. @since 0.0.1
     ros::Subscriber image_subscriber;  //!< @brief The image subscriber. @since 0.0.1
-    float frame_rate;                  //!< @brief The frame rate. @since 0.0.1
-    std::string image_topic;           //!< @brief The image topic. @since 0.0.1
-    std::string save_directory;        //!< @brief The saving dicrectory. @since 0.0.1
-    int start_index;                   //!< @brief The start index. @since 0.0.1
+
+    float frame_rate;            //!< @brief The frame rate. @since 0.0.1
+    std::string image_topic;     //!< @brief The image topic. @since 0.0.1
+    int rotation;                //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+    std::string save_directory;  //!< @brief The saving dicrectory. @since 0.0.1
+    int start_index;             //!< @brief The start index. @since 0.0.1
 
    public:
     /**
@@ -52,6 +54,16 @@ class ImageFormater {
      * 
      */
     ~ImageFormater();
+
+    /**
+     * @brief Rotate a image by 90, 180, 270 degrees.
+     * 
+     * @param[in] src The input image.
+     * @param[out] dst The destination image.
+     * @param[in] rotation The rotation value.
+     * @since 0.0.1
+     */
+    void rotate_image(const cv::Mat src, cv::Mat& dst, int rotation);
 
     /**
      * @brief The compressed image callback function.
