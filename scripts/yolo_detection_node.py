@@ -36,11 +36,13 @@ class YOLODetection:
         }
         self.__tfnet = TFNet(TFNET_OPTIONS)
 
-        # The image publisher
-        self.__image_pub = rospy.Publisher("/yolo/compressed", CompressedImage, queue_size=0)
-
         # The image subscriber
-        self.__image_sub = rospy.Subscriber("/econ_camera/image_raw/compressed", CompressedImage, self.image_callback)
+        image_sub_topic = rospy.get_param("~image_sub_topic", "/econ_camera/image_raw/compressed")
+        self.__image_sub = rospy.Subscriber(image_sub_topic, CompressedImage, self.image_callback)
+
+        # The image publisher
+        image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image/compressed")
+        self.__image_pub = rospy.Publisher(image_pub_topic, CompressedImage, queue_size=0)
 
     def image_callback(self, image_msg):
         """!@brief The image callback function.
@@ -80,8 +82,9 @@ def main(args):
     @since 0.0.1
     """
 
-    ic = YOLODetection()
-    rospy.init_node("yolo_detection", anonymous=True)
+    rospy.init_node("yolo_detection_node", anonymous=True)
+    yolo_detection = YOLODetection()
+
     try:
         rospy.spin()
     except KeyboardInterrupt:

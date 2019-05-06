@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- Run filtering -->
+    <!-- Run the image_formater_node -->
     <node name="image_formater_node" pkg="ros_ml" type="image_formater_node" output="screen">
         <!-- Frame rate -->
         <param name="frame_rate" value="1.0" />
