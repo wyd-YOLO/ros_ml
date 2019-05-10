@@ -27,6 +27,17 @@ class YOLODetection:
         @since 0.0.1
         """
 
+        # The image publisher
+        image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image/compressed")
+        self.__image_pub = rospy.Publisher(image_pub_topic, CompressedImage, queue_size=0)
+
+        # The image subscriber
+        image_sub_topic = rospy.get_param("~image_sub_topic", "/econ_camera/image_raw/compressed")
+        self.__image_sub = rospy.Subscriber(image_sub_topic, CompressedImage, self.image_callback)
+
+        # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
+        self.__rotation = rospy.get_param("~rotation", 0)
+
         # Define the model options and run
         TFNET_OPTIONS = {
             "model": "cfg/tiny-yolo-voc-2c.cfg",
@@ -36,22 +47,25 @@ class YOLODetection:
         }
         self.__tfnet = TFNet(TFNET_OPTIONS)
 
-        # The image subscriber
-        image_sub_topic = rospy.get_param("~image_sub_topic", "/econ_camera/image_raw/compressed")
-        self.__image_sub = rospy.Subscriber(image_sub_topic, CompressedImage, self.image_callback)
-
-        # The image publisher
-        image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image/compressed")
-        self.__image_pub = rospy.Publisher(image_pub_topic, CompressedImage, queue_size=0)
-
     def image_callback(self, image_msg):
         """!@brief The image callback function.
         @since 0.0.1
         """
 
+        # Decode the image
         np_arr = np.fromstring(image_msg.data, np.uint8)
         image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-        image = cv2.flip(image, -1)
+
+        # Rotate the image
+        if self.__rotation != 0:
+            if self.__rotation == 1:
+                image = cv2.transpose(image)
+                image = cv2.flip(image, 1)
+            elif self.__rotation == 2:
+                image = cv2.flip(image, -1)
+            elif self.__rotation == 3:
+                image = cv2.transpose(image)
+                image = cv2.flip(image, 0)
 
         # Use YOLO to detect objects in the image
         results = self.__tfnet.return_predict(image)
