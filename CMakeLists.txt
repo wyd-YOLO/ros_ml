@@ -11,13 +11,14 @@ project(ros_ml)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3.4 REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
     cv_bridge
     roscpp
     rospy
     std_msgs
+    message_filters
     message_generation
 )
 
@@ -114,7 +115,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ros_ml
-    CATKIN_DEPENDS cv_bridge roscpp rospy std_msgs
+    CATKIN_DEPENDS cv_bridge roscpp rospy std_msgs message_filters
 #  DEPENDS system_lib
 )
 
@@ -165,6 +166,11 @@ add_executable(image_formater_node
     src/image_formater.cpp)
 target_link_libraries(image_formater_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
+add_executable(ocr_tesseract_node
+    src/ocr_tesseract_node.cpp
+    src/ocr_tesseract.cpp)
+target_link_libraries(ocr_tesseract_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
+
 #############
 ## Install ##
 #############
@@ -193,6 +199,7 @@ install(PROGRAMS
 
 install(TARGETS
     image_formater_node
+    ocr_tesseract_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -212,6 +219,7 @@ install(TARGETS
 
 install(FILES
     launch/iamge_formater.launch
+    launch/yolo_detection_node.launch
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

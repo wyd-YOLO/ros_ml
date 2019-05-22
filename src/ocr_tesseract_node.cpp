@@ -1,14 +1,14 @@
 /**
- * @file image_formater_node.cpp
+ * @file ocr_tesseract_node.cpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
- * @brief The image formater node.
+ * @brief The ocr tesseract node.
  * @since 0.0.1
  * 
  * @copyright Copyright (c) 2019, Nguyen Quang, all rights reserved.
  * 
  */
 
-#include "ros_ml/image_formater.h"
+#include "ros_ml/ocr_tesseract.h"
 
 /**
  * @brief The main function.
@@ -19,15 +19,10 @@
  * @since 0.0.1
  */
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "image_listener");
+    ros::init(argc, argv, "orc_tesseract");
     ros::NodeHandle node("~");
-    ImageFormater image_formater(node);
+    OCRTesseract ocr_tesseract(node);
 
-    ros::Rate frame_rate(image_formater.get_frame_rate());
-
-    while (ros::ok()) {
-        ros::spinOnce();
-        frame_rate.sleep();
-    }
+    ros::spin();
     return 0;
 }
