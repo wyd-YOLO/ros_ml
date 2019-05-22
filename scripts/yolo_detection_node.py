@@ -27,6 +27,15 @@ class YOLODetection:
         @since 0.0.1
         """
 
+        # Define the model options and run
+        TFNET_OPTIONS = {
+            "model": "cfg/tiny-yolo-voc-2c.cfg",
+            "load": 9500,
+            "threshold": 0.1,
+            "gpu": 0.8
+        }
+        self.__tfnet = TFNet(TFNET_OPTIONS)
+
         # The image publisher
         image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image/compressed")
         self.__image_pub = rospy.Publisher(image_pub_topic, CompressedImage, queue_size=0)
@@ -37,15 +46,6 @@ class YOLODetection:
 
         # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
         self.__rotation = rospy.get_param("~rotation", 0)
-
-        # Define the model options and run
-        TFNET_OPTIONS = {
-            "model": "cfg/tiny-yolo-voc-2c.cfg",
-            "load": 10000,
-            "threshold": 0.1,
-            "gpu": 0.8
-        }
-        self.__tfnet = TFNet(TFNET_OPTIONS)
 
     def image_callback(self, image_msg):
         """!@brief The image callback function.
