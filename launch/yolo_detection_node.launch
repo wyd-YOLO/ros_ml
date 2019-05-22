@@ -3,7 +3,7 @@
     <!-- Run the yolo_detection_node -->
     <node name="yolo_detection_node" pkg="ros_ml" type="yolo_detection_node.py" output="screen">
         <!-- Image publisher topic -->
-        <param name="image_pub_topic" value="yolo_detection_image/compressed" />
+        <param name="image_pub_topic" value="yolo_detection_image" />
 
         <!-- Image subscriber topic -->
         <param name="image_sub_topic" value="/econ_camera/image_raw/compressed" />

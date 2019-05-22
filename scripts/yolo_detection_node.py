@@ -13,7 +13,8 @@ import sys
 import rospy
 import numpy as np
 import cv2
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CompressedImage, Image
+from cv_bridge import CvBridge, CvBridgeError
 from darkflow.net.build import TFNet
 
 
@@ -36,9 +37,12 @@ class YOLODetection:
         }
         self.__tfnet = TFNet(TFNET_OPTIONS)
 
+        # cv_bridge
+        self.__cv_bridge = CvBridge()
+
         # The image publisher
-        image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image/compressed")
-        self.__image_pub = rospy.Publisher(image_pub_topic, CompressedImage, queue_size=0)
+        image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image")
+        self.__image_pub = rospy.Publisher(image_pub_topic, Image, queue_size=0)
 
         # The image subscriber
         image_sub_topic = rospy.get_param("~image_sub_topic", "/econ_camera/image_raw/compressed")
@@ -83,12 +87,7 @@ class YOLODetection:
                 image = cv2.rectangle(image, tl, br, (0, 0, 255), 2)
                 image = cv2.putText(image, confidence, (tl[0], tl[1] + 25), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
-        # Compress and publish the result image
-        msg = CompressedImage()
-        msg.header.stamp = rospy.Time.now()
-        msg.format = "jpeg"
-        msg.data = np.array(cv2.imencode('.jpg', image)[1]).tostring()
-        self.__image_pub.publish(msg)
+        self.__image_pub.publish(self.__cv_bridge.cv2_to_imgmsg(image, "bgr8"))
 
 
 def main(args):
