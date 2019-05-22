@@ -16,6 +16,7 @@ import cv2
 from sensor_msgs.msg import CompressedImage, Image
 from cv_bridge import CvBridge, CvBridgeError
 from darkflow.net.build import TFNet
+from ros_ml.msg import Pixel, YoloObject, YoloResult
 
 
 class YOLODetection:
@@ -40,13 +41,17 @@ class YOLODetection:
         # cv_bridge
         self.__cv_bridge = CvBridge()
 
-        # The image publisher
-        image_pub_topic = rospy.get_param("~image_pub_topic", "yolo_detection_image")
-        self.__image_pub = rospy.Publisher(image_pub_topic, Image, queue_size=0)
+        # The YOLO detection result publisher
+        yolo_result_topic = rospy.get_param("~yolo_result_topic", "yolo_detection_result")
+        self.__yolo_result_pub = rospy.Publisher(yolo_result_topic, YoloResult, queue_size=0)
 
-        # The image subscriber
-        image_sub_topic = rospy.get_param("~image_sub_topic", "/econ_camera/image_raw/compressed")
-        self.__image_sub = rospy.Subscriber(image_sub_topic, CompressedImage, self.image_callback)
+        # The YOLO detection image publisher
+        yolo_image_pub_topic = rospy.get_param("~yolo_image_pub_topic", "yolo_detection_image")
+        self.__yolo_image_pub = rospy.Publisher(yolo_image_pub_topic, Image, queue_size=0)
+
+        # The YOLO detection image subscriber
+        yolo_image_sub_topic = rospy.get_param("~yolo_image_sub_topic", "/econ_camera/image_raw/compressed")
+        self.__yolo_image_sub = rospy.Subscriber(yolo_image_sub_topic, CompressedImage, self.image_callback)
 
         # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
         self.__rotation = rospy.get_param("~rotation", 0)
@@ -71,23 +76,26 @@ class YOLODetection:
                 image = cv2.transpose(image)
                 image = cv2.flip(image, 0)
 
+        qr_tags = []
+        giant_locations = []
         # Use YOLO to detect objects in the image
         results = self.__tfnet.return_predict(image)
         for result in results:
-            tl = (result["topleft"]["x"], result["topleft"]["y"])
-            br = (result["bottomright"]["x"], result["bottomright"]["y"])
-            confidence = str(result["confidence"])[:4]
+            tl = Pixel(x=result["topleft"]["x"], y=result["topleft"]["y"])
+            br = Pixel(x=result["bottomright"]["x"], y=result["bottomright"]["y"])
+            confidence = result["confidence"]
+            rect = YoloObject(tl=tl, br=br, confidence=confidence)
             label = result["label"]
 
             # Add the box and confidence
             if label == "giant_location":
-                image = cv2.rectangle(image, tl, br, (255, 0, 0), 2)
-                image = cv2.putText(image, confidence, (tl[0], tl[1] + 25), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 2)
+                giant_locations.append(rect)
             elif label == "qr_tag":
-                image = cv2.rectangle(image, tl, br, (0, 0, 255), 2)
-                image = cv2.putText(image, confidence, (tl[0], tl[1] + 25), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+                qr_tags.append(rect)
 
-        self.__image_pub.publish(self.__cv_bridge.cv2_to_imgmsg(image, "bgr8"))
+        self.__yolo_image_pub.publish(self.__cv_bridge.cv2_to_imgmsg(image, "bgr8"))
+        yolo_result = YoloResult(qr_tags=qr_tags, giant_locations=giant_locations)
+        self.__yolo_result_pub.publish(yolo_result)
 
 
 def main(args):

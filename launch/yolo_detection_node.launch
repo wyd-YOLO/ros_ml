@@ -2,11 +2,14 @@
 <launch>
     <!-- Run the yolo_detection_node -->
     <node name="yolo_detection_node" pkg="ros_ml" type="yolo_detection_node.py" output="screen">
-        <!-- Image publisher topic -->
-        <param name="image_pub_topic" value="yolo_detection_image" />
+        <!-- The YOLO detection result topic -->
+        <param name="yolo_result_topic" value="yolo_detection_result" />
 
-        <!-- Image subscriber topic -->
-        <param name="image_sub_topic" value="/econ_camera/image_raw/compressed" />
+        <!-- The YOLO detection image publisher topic -->
+        <param name="yolo_image_pub_topic" value="yolo_detection_image" />
+
+        <!-- The YOLO detection image subscriber topic -->
+        <param name="yolo_image_sub_topic" value="/econ_camera/image_raw/compressed" />
 
         <!-- Rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
         <param name="rotation" value="2" />
