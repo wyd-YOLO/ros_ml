@@ -1,15 +1,15 @@
 /**
- * @file ocr_tesseract.h
+ * @file tesseract_ocr.h
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
- * @brief The header file of the OCRTesseract class.
+ * @brief The header file of the TesseractOCR class.
  * @since 0.0.1
  * 
  * @copyright Copyright (c) 2019, Nguyen Quang, all rights reserved.
  * 
  */
 
-#ifndef _OCR_TESSERACT_H_
-#define _OCR_TESSERACT_H_
+#ifndef _TESSERACT_OCR_H_
+#define _TESSERACT_OCR_H_
 
 #include <iostream>
 #include <string>
@@ -32,7 +32,7 @@
  * @since 0.0.1
  * 
  */
-class OCRTesseract {
+class TesseractOCR {
    private:
     ros::NodeHandle node;                                             //!< @brief The ros node handle. @since 0.0.1
     message_filters::Subscriber<sensor_msgs::Image> yolo_image_sub;   //!< @brief The YOLO detection image. @since 0.0.1
@@ -42,25 +42,25 @@ class OCRTesseract {
     typedef message_filters::Synchronizer<MySyncPolicy> Sync;
     boost::shared_ptr<Sync> sync;  //!< @brief The Synchronizer shared ponter. @since 0.0.1
 
-    ros::Publisher ocr_result_pub;                  //!< @brief The OCRTesseract result publisher. @since 0.0.1
+    ros::Publisher ocr_result_pub;                  //!< @brief The TesseractOCR result publisher. @since 0.0.1
     cv::Ptr<cv::text::OCRTesseract> ocr_tesseract;  //!< @brief The OCRTesseract object. @since 0.0.1
 
    public:
     /**
-     * @brief Construct a new OCRTesseract object.
+     * @brief Construct a new TesseractOCR object.
      * 
      * @param[in] node The ros node handle.
      * @since 0.0.1
      */
-    OCRTesseract(ros::NodeHandle node);
+    TesseractOCR(ros::NodeHandle node);
 
     /**
-     * @brief Destroy the OCRTesseract object.
+     * @brief Destroy the TesseractOCR object.
      * 
      * @since 0.0.1
      * 
      */
-    ~OCRTesseract();
+    ~TesseractOCR();
 
     /**
      * @brief The callback function.
@@ -72,4 +72,4 @@ class OCRTesseract {
     void callback(const sensor_msgs::ImageConstPtr& img_msg, const ros_ml::YoloResultConstPtr& result_msg);
 };
 
-#endif /* _OCR_TESSERACT_H_ */
+#endif /* _TESSERACT_OCR_H_ */

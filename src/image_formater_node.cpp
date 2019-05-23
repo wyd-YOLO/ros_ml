@@ -19,7 +19,7 @@
  * @since 0.0.1
  */
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "image_listener");
+    ros::init(argc, argv, "image_formater");
     ros::NodeHandle node("~");
     ImageFormater image_formater(node);
 

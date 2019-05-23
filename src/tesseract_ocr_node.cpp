@@ -1,14 +1,14 @@
 /**
- * @file ocr_tesseract_node.cpp
+ * @file tesseract_ocr_node.cpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
- * @brief The ocr tesseract node.
+ * @brief The tesseract ocr node.
  * @since 0.0.1
  * 
  * @copyright Copyright (c) 2019, Nguyen Quang, all rights reserved.
  * 
  */
 
-#include "ros_ml/ocr_tesseract.h"
+#include "ros_ml/tesseract_ocr.h"
 
 /**
  * @brief The main function.
@@ -19,9 +19,9 @@
  * @since 0.0.1
  */
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "orc_tesseract");
+    ros::init(argc, argv, "tesseract_orc");
     ros::NodeHandle node("~");
-    OCRTesseract ocr_tesseract(node);
+    TesseractOCR tesseract_ocr(node);
 
     ros::spin();
     return 0;

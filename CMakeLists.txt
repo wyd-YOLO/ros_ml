@@ -166,10 +166,10 @@ add_executable(image_formater_node
     src/image_formater.cpp)
 target_link_libraries(image_formater_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(ocr_tesseract_node
-    src/ocr_tesseract_node.cpp
-    src/ocr_tesseract.cpp)
-target_link_libraries(ocr_tesseract_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
+add_executable(tesseract_ocr_node
+    src/tesseract_ocr_node.cpp
+    src/tesseract_ocr.cpp)
+target_link_libraries(tesseract_ocr_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
 ## Install ##
@@ -199,7 +199,7 @@ install(PROGRAMS
 
 install(TARGETS
     image_formater_node
-    ocr_tesseract_node
+    tesseract_ocr_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
