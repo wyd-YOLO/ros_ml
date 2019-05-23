@@ -61,6 +61,8 @@ add_message_files(
   Pixel.msg
   YoloObject.msg
   YoloResult.msg
+  OCRObject.msg
+  OCRResult.msg
 )
 
 ## Generate services in the 'srv' folder

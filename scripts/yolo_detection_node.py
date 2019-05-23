@@ -11,6 +11,7 @@
 
 import sys
 import rospy
+import std_msgs.msg
 import numpy as np
 import cv2
 from sensor_msgs.msg import CompressedImage, Image
@@ -93,8 +94,12 @@ class YOLODetection:
             elif label == "qr_tag":
                 qr_tags.append(rect)
 
-        self.__yolo_image_pub.publish(self.__cv_bridge.cv2_to_imgmsg(image, "bgr8"))
+        yolo_image_pub_msg = self.__cv_bridge.cv2_to_imgmsg(image, "bgr8")
         yolo_result = YoloResult(qr_tags=qr_tags, giant_locations=giant_locations)
+        current_time = rospy.Time.now()
+        yolo_image_pub_msg.header.stamp = current_time
+        yolo_result.header.stamp = current_time
+        self.__yolo_image_pub.publish(yolo_image_pub_msg)
         self.__yolo_result_pub.publish(yolo_result)
 
 

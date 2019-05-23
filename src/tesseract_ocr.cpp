@@ -16,7 +16,7 @@ TesseractOCR::TesseractOCR(ros::NodeHandle node) {
     yolo_result_sub.subscribe(node, "/yolo_detection_result", 1);
     sync.reset(new Sync(MySyncPolicy(10), yolo_image_sub, yolo_result_sub));
     sync->registerCallback(boost::bind(&TesseractOCR::callback, this, _1, _2));
-    ocr_result_pub = node.advertise<std_msgs::String>("tesseract_ocr_result_pub", 1);
+    ocr_result_pub = node.advertise<ros_ml::OCRResult>("tesseract_ocr_result_pub", 1);
     ocr_tesseract = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
 }
 
@@ -33,6 +33,7 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
     }
 
     std::stringstream ss_pub;
+    ros_ml::OCRResult ocr_result;
     // For each location got from YOLO detection
     for (int i_l = 0; i_l < result_msg->giant_locations.size(); i_l++) {
         std::string output;
@@ -76,13 +77,20 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
                         }
                     }
                     if (good_result) {
-                        ss_pub << word.substr(pos_1 - 4, 8);
+                        ros_ml::OCRObject ocr_object;
+                        ocr_object.yolo_confidence = result_msg->giant_locations[i_l].confidence;
+                        ocr_object.ocr_confidence = confidences[w] / 100.0f;
+                        ocr_object.data = word.substr(pos_1 - 4, 8);
+                        ocr_object.tl.x = boxes[w].tl().x + result_msg->giant_locations[i_l].tl.x;
+                        ocr_object.tl.y = boxes[w].tl().y + result_msg->giant_locations[i_l].tl.y;
+                        ocr_object.br.x = boxes[w].br().x + result_msg->giant_locations[i_l].tl.x;
+                        ocr_object.br.y = boxes[w].br().y + result_msg->giant_locations[i_l].tl.y;
+                        ocr_result.giant_locations.push_back(ocr_object);
                     }
                 }
             }
         }
     }
-    std_msgs::String msg_string;
-    msg_string.data = ss_pub.str();
-    ocr_result_pub.publish(msg_string);
+    ocr_result.header.stamp = ros::Time::now();
+    ocr_result_pub.publish(ocr_result);
 }

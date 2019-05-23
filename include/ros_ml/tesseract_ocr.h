@@ -25,6 +25,7 @@
 #include <message_filters/sync_policies/approximate_time.h>
 
 #include "ros_ml/YoloResult.h"
+#include "ros_ml/OCRResult.h"
 
 /**
  * @brief A class to recognize text from YOLO detection output.
