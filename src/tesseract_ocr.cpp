@@ -12,12 +12,25 @@
 
 TesseractOCR::TesseractOCR(ros::NodeHandle node) {
     this->node = node;
-    yolo_image_sub.subscribe(node, "/yolo_detection_image", 1);
-    yolo_result_sub.subscribe(node, "/yolo_detection_result", 1);
+
+    // Initialize YOLO detection image subscriber
+    node.param<std::string>("yolo_image_topic", yolo_image_topic, "yolo_detection_image");
+    yolo_image_sub.subscribe(node, yolo_image_topic, 1);
+
+    // Initialize YOLO detection result subscriber
+    node.param<std::string>("yolo_result_topic", yolo_result_topic, "yolo_detection_result");
+    yolo_result_sub.subscribe(node, yolo_result_topic, 1);
+
+    // Initialize the synchronizer
     sync.reset(new Sync(MySyncPolicy(10), yolo_image_sub, yolo_result_sub));
     sync->registerCallback(boost::bind(&TesseractOCR::callback, this, _1, _2));
-    ocr_result_pub = node.advertise<ros_ml::OCRResult>("tesseract_ocr_result_pub", 1);
+
+    // Initialize ORCTesseract
     ocr_tesseract = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
+
+    // Initialize TesseractOCR result publisher
+    node.param<std::string>("tesseract_result_topic", tesseract_result_topic, "tesseract_ocr_result");
+    tesseract_result_pub = node.advertise<ros_ml::OCRResult>(tesseract_result_topic, 1);
 }
 
 TesseractOCR::~TesseractOCR() {
@@ -25,6 +38,7 @@ TesseractOCR::~TesseractOCR() {
 }
 
 void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros_ml::YoloResultConstPtr& result_msg) {
+    // Decode the image message
     cv::Mat frame;
     try {
         frame = cv_bridge::toCvShare(img_msg, "mono8")->image;
@@ -92,5 +106,5 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
         }
     }
     ocr_result.header.stamp = ros::Time::now();
-    ocr_result_pub.publish(ocr_result);
+    tesseract_result_pub.publish(ocr_result);
 }

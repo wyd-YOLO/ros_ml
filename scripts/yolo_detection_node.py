@@ -39,23 +39,23 @@ class YOLODetection:
         }
         self.__tfnet = TFNet(TFNET_OPTIONS)
 
+        # The YOLO detection input image subscriber
+        yolo_input_image_topic = rospy.get_param("~yolo_input_image_topic", "/econ_camera/image_raw/compressed")
+        self.__yolo_image_sub = rospy.Subscriber(yolo_input_image_topic, CompressedImage, self.image_callback)
+
+        # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
+        self.__rotation = rospy.get_param("~rotation", 0)
+
         # cv_bridge
         self.__cv_bridge = CvBridge()
+
+        # The YOLO detection image publisher
+        yolo_image_topic = rospy.get_param("~yolo_image_topic", "yolo_detection_image")
+        self.__yolo_image_pub = rospy.Publisher(yolo_image_topic, Image, queue_size=0)
 
         # The YOLO detection result publisher
         yolo_result_topic = rospy.get_param("~yolo_result_topic", "yolo_detection_result")
         self.__yolo_result_pub = rospy.Publisher(yolo_result_topic, YoloResult, queue_size=0)
-
-        # The YOLO detection image publisher
-        yolo_image_pub_topic = rospy.get_param("~yolo_image_pub_topic", "yolo_detection_image")
-        self.__yolo_image_pub = rospy.Publisher(yolo_image_pub_topic, Image, queue_size=0)
-
-        # The YOLO detection image subscriber
-        yolo_image_sub_topic = rospy.get_param("~yolo_image_sub_topic", "/econ_camera/image_raw/compressed")
-        self.__yolo_image_sub = rospy.Subscriber(yolo_image_sub_topic, CompressedImage, self.image_callback)
-
-        # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
-        self.__rotation = rospy.get_param("~rotation", 0)
 
     def image_callback(self, image_msg):
         """!@brief The image callback function.

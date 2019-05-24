@@ -35,16 +35,22 @@
  */
 class TesseractOCR {
    private:
-    ros::NodeHandle node;                                             //!< @brief The ros node handle. @since 0.0.1
-    message_filters::Subscriber<sensor_msgs::Image> yolo_image_sub;   //!< @brief The YOLO detection image. @since 0.0.1
-    message_filters::Subscriber<ros_ml::YoloResult> yolo_result_sub;  //!< @brief The YOLO detection result. @since 0.0.1
+    ros::NodeHandle node;  //!< @brief The ros node handle. @since 0.0.1
+
+    std::string yolo_image_topic;                                    //!< @brief The YOLO detection image topic. @since 0.0.1
+    message_filters::Subscriber<sensor_msgs::Image> yolo_image_sub;  //!< @brief The YOLO detection image subscriber. @since 0.0.1
+
+    std::string yolo_result_topic;                                    //!< @brief The YOLO detection result topic. @since 0.0.1
+    message_filters::Subscriber<ros_ml::YoloResult> yolo_result_sub;  //!< @brief The YOLO detection result subscriber. @since 0.0.1
 
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, ros_ml::YoloResult> MySyncPolicy;
     typedef message_filters::Synchronizer<MySyncPolicy> Sync;
     boost::shared_ptr<Sync> sync;  //!< @brief The Synchronizer shared ponter. @since 0.0.1
 
-    ros::Publisher ocr_result_pub;                  //!< @brief The TesseractOCR result publisher. @since 0.0.1
     cv::Ptr<cv::text::OCRTesseract> ocr_tesseract;  //!< @brief The OCRTesseract object. @since 0.0.1
+
+    std::string tesseract_result_topic;   //!< @brief The TesseractOCR result topic. @since 0.0.1
+    ros::Publisher tesseract_result_pub;  //!< @brief The TesseractOCR result publisher. @since 0.0.1
 
    public:
     /**

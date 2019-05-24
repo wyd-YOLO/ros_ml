@@ -220,8 +220,9 @@ install(TARGETS
 # )
 
 install(FILES
-    launch/iamge_formater.launch
+    launch/iamge_formater_node.launch
     launch/yolo_detection_node.launch
+    launch/tesseract_ocr_node.launch
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

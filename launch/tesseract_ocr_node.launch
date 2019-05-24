@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Run the tesseract_ocr_node -->
+    <node name="tesseract_ocr_node" pkg="ros_ml" type="tesseract_ocr_node" output="screen">
+        <!-- The YOLO detection image topic -->
+        <param name="yolo_image_topic" value="/yolo_detection_image" />
+
+        <!-- The YOLO detection result topic -->
+        <param name="yolo_result_topic" value="/yolo_detection_result" />
+
+        <!-- The Tesseract OCR result topic -->
+        <param name="tesseract_result_topic" value="tesseract_ocr_result" />
+    </node>
+</launch>
