@@ -13,11 +13,11 @@
 TesseractOCR::TesseractOCR(ros::NodeHandle node) {
     this->node = node;
 
-    // Initialize YOLO detection image subscriber
+    // Initialize the YOLO detection image subscriber
     node.param<std::string>("yolo_image_topic", yolo_image_topic, "yolo_detection_image");
     yolo_image_sub.subscribe(node, yolo_image_topic, 1);
 
-    // Initialize YOLO detection result subscriber
+    // Initialize the YOLO detection result subscriber
     node.param<std::string>("yolo_result_topic", yolo_result_topic, "yolo_detection_result");
     yolo_result_sub.subscribe(node, yolo_result_topic, 1);
 
@@ -25,10 +25,15 @@ TesseractOCR::TesseractOCR(ros::NodeHandle node) {
     sync.reset(new Sync(MySyncPolicy(10), yolo_image_sub, yolo_result_sub));
     sync->registerCallback(boost::bind(&TesseractOCR::callback, this, _1, _2));
 
-    // Initialize ORCTesseract
+    // Initialize the ORCTesseract
     ocr_tesseract = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
 
-    // Initialize TesseractOCR result publisher
+    // Initialize the TesseractOCR image publisher
+    node.param<std::string>("tesseract_image_topic", tesseract_image_topic, "tesseract_ocr_image");
+    image_transport::ImageTransport it(node);
+    tesseract_image_pub = it.advertise(tesseract_image_topic, 1);
+
+    // Initialize the TesseractOCR result publisher
     node.param<std::string>("tesseract_result_topic", tesseract_result_topic, "tesseract_ocr_result");
     tesseract_result_pub = node.advertise<ros_ml::OCRResult>(tesseract_result_topic, 1);
 }
@@ -41,13 +46,14 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
     // Decode the image message
     cv::Mat frame;
     try {
-        frame = cv_bridge::toCvShare(img_msg, "mono8")->image;
+        frame = cv_bridge::toCvShare(img_msg, "bgr8")->image;
     } catch (cv_bridge::Exception& e) {
-        ROS_ERROR("Could not convert from '%s' to 'mono8'.", img_msg->encoding.c_str());
+        ROS_ERROR("Could not convert from '%s' to 'bgr8'.", img_msg->encoding.c_str());
     }
 
-    std::stringstream ss_pub;
+    // The TesseractOCR result
     ros_ml::OCRResult ocr_result;
+
     // For each location got from YOLO detection
     for (int i_l = 0; i_l < result_msg->giant_locations.size(); i_l++) {
         std::string output;
@@ -56,7 +62,8 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
         std::vector<float> confidences;
         cv::Rect rect(cv::Point(result_msg->giant_locations[i_l].tl.x, result_msg->giant_locations[i_l].tl.y),
                       cv::Point(result_msg->giant_locations[i_l].br.x, result_msg->giant_locations[i_l].br.y));
-        cv::Mat cropped_image = frame(rect);
+        cv::Mat cropped_image = frame(rect).clone();
+        cv::cvtColor(cropped_image, cropped_image, cv::COLOR_BGR2GRAY);
 
         // Run OCRTesseract
         ocr_tesseract->run(cropped_image, output, &boxes, &words, &confidences, cv::text::OCR_LEVEL_WORD);
@@ -105,6 +112,36 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
             }
         }
     }
+
+    // Draw YOLO detection result for giant locations
+    for (int i = 0; i < result_msg->giant_locations.size(); i++) {
+        cv::Point pt1 = cv::Point(result_msg->giant_locations[i].tl.x, result_msg->giant_locations[i].tl.y);
+        cv::Point pt2 = cv::Point(result_msg->giant_locations[i].br.x, result_msg->giant_locations[i].br.y);
+        cv::rectangle(frame, pt1, pt2, cv::Scalar(255, 0, 0), 2);
+    }
+
+    // Draw YOLO detection result for qr tags
+    for (int i = 0; i < result_msg->qr_tags.size(); i++) {
+        cv::Point pt1 = cv::Point(result_msg->qr_tags[i].tl.x, result_msg->qr_tags[i].tl.y);
+        cv::Point pt2 = cv::Point(result_msg->qr_tags[i].br.x, result_msg->qr_tags[i].br.y);
+        cv::rectangle(frame, pt1, pt2, cv::Scalar(0, 0, 255), 2);
+    }
+
+    // Draw TesseractOCR result for giant locaitons
+    for (int i = 0; i < ocr_result.giant_locations.size(); i++) {
+        cv::Point pt1 = cv::Point(ocr_result.giant_locations[i].tl.x, ocr_result.giant_locations[i].tl.y);
+        cv::Point pt2 = cv::Point(ocr_result.giant_locations[i].br.x, ocr_result.giant_locations[i].br.y);
+        cv::rectangle(frame, pt1, pt2, cv::Scalar(0, 255, 0), 2);
+        cv::putText(frame, ocr_result.giant_locations[i].data, pt1, 1, 2, cv::Scalar(0, 255, 0), 2);
+    }
+
+    // Publish the TesseractOCR image
+    sensor_msgs::ImagePtr ocr_img;
+    ocr_img = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
+    ocr_img->header.stamp = ros::Time::now();
+    tesseract_image_pub.publish(ocr_img);
+
+    // Publish the TesseractOCR result
     ocr_result.header.stamp = ros::Time::now();
     tesseract_result_pub.publish(ocr_result);
 }

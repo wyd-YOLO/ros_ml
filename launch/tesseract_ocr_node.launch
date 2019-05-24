@@ -8,7 +8,10 @@
         <!-- The YOLO detection result topic -->
         <param name="yolo_result_topic" value="/yolo_detection_result" />
 
-        <!-- The Tesseract OCR result topic -->
+        <!-- The TesseractOCR image topic -->
+        <param name="tesseract_image_topic" value="tesseract_ocr_image" />
+
+        <!-- The TesseractOCR result topic -->
         <param name="tesseract_result_topic" value="tesseract_ocr_result" />
     </node>
 </launch>

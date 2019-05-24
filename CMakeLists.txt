@@ -15,6 +15,7 @@ find_package(OpenCV 3.4 REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
     cv_bridge
+    image_transport
     roscpp
     rospy
     std_msgs
@@ -117,7 +118,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ros_ml
-    CATKIN_DEPENDS cv_bridge roscpp rospy std_msgs message_filters
+    CATKIN_DEPENDS cv_bridge image_transport roscpp rospy std_msgs message_filters
 #  DEPENDS system_lib
 )
 

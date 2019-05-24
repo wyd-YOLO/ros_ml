@@ -18,6 +18,7 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/text.hpp>
 #include <message_filters/subscriber.h>
@@ -48,6 +49,9 @@ class TesseractOCR {
     boost::shared_ptr<Sync> sync;  //!< @brief The Synchronizer shared ponter. @since 0.0.1
 
     cv::Ptr<cv::text::OCRTesseract> ocr_tesseract;  //!< @brief The OCRTesseract object. @since 0.0.1
+
+    std::string tesseract_image_topic;               //!< @brief The TesseractOCR image topic. @since 0.0.1
+    image_transport::Publisher tesseract_image_pub;  //!< @brief The TesseractOCR image publisher. @since 0.0.1
 
     std::string tesseract_result_topic;   //!< @brief The TesseractOCR result topic. @since 0.0.1
     ros::Publisher tesseract_result_pub;  //!< @brief The TesseractOCR result publisher. @since 0.0.1
