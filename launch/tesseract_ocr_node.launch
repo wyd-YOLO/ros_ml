@@ -1,17 +1,66 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- Run the tesseract_ocr_node -->
-    <node name="tesseract_ocr_node" pkg="ros_ml" type="tesseract_ocr_node" output="screen">
+    <!-- Run TesseractOCR on YOLO output -->
+    <arg name="tesseract_ocr_image_topic" default="/tesseract_ocr_node/tesseract_ocr_image" />
+    <arg name="tesseract_ocr_result_topic" default="/tesseract_ocr_node/tesseract_ocr_result" />
+
+    <!-- Run the tesseract_ocr_node_0 -->
+    <node name="tesseract_ocr_node_mod_0" pkg="ros_ml" type="tesseract_ocr_node" output="screen">
         <!-- The YOLO detection image topic -->
-        <param name="yolo_image_topic" value="/yolo_detection_image" />
+        <param name="yolo_image_topic" value="/yolo_detection_mod_0_image" />
 
         <!-- The YOLO detection result topic -->
-        <param name="yolo_result_topic" value="/yolo_detection_result" />
+        <param name="yolo_result_topic" value="/yolo_detection_mod_0_result" />
 
         <!-- The TesseractOCR image topic -->
-        <param name="tesseract_image_topic" value="tesseract_ocr_image" />
+        <param name="tesseract_image_topic" value="$(arg tesseract_ocr_image_topic)" />
 
         <!-- The TesseractOCR result topic -->
-        <param name="tesseract_result_topic" value="tesseract_ocr_result" />
+        <param name="tesseract_result_topic" value="$(arg tesseract_ocr_result_topic)" />
+    </node>
+
+    <!-- Run the tesseract_ocr_node_mod_1 -->
+    <node name="tesseract_ocr_node_mod_1" pkg="ros_ml" type="tesseract_ocr_node" output="screen">
+        <!-- The YOLO detection image topic -->
+        <param name="yolo_image_topic" value="/yolo_detection_mod_1_image" />
+
+        <!-- The YOLO detection result topic -->
+        <param name="yolo_result_topic" value="/yolo_detection_mod_1_result" />
+
+        <!-- The TesseractOCR image topic -->
+        <param name="tesseract_image_topic" value="$(arg tesseract_ocr_image_topic)" />
+
+        <!-- The TesseractOCR result topic -->
+        <param name="tesseract_result_topic" value="$(arg tesseract_ocr_result_topic)" />
+    </node>
+
+    <!-- Run the tesseract_ocr_node_mod_2 -->
+    <node name="tesseract_ocr_node_mod_2" pkg="ros_ml" type="tesseract_ocr_node" output="screen">
+        <!-- The YOLO detection image topic -->
+        <param name="yolo_image_topic" value="/yolo_detection_mod_2_image" />
+
+        <!-- The YOLO detection result topic -->
+        <param name="yolo_result_topic" value="/yolo_detection_mod_2_result" />
+
+        <!-- The TesseractOCR image topic -->
+        <param name="tesseract_image_topic" value="$(arg tesseract_ocr_image_topic)" />
+
+        <!-- The TesseractOCR result topic -->
+        <param name="tesseract_result_topic" value="$(arg tesseract_ocr_result_topic)" />
+    </node>
+
+    <!-- Run the tesseract_ocr_node_mod_3 -->
+    <node name="tesseract_ocr_node_mod_3" pkg="ros_ml" type="tesseract_ocr_node" output="screen">
+        <!-- The YOLO detection image topic -->
+        <param name="yolo_image_topic" value="/yolo_detection_mod_3_image" />
+
+        <!-- The YOLO detection result topic -->
+        <param name="yolo_result_topic" value="/yolo_detection_mod_3_result" />
+
+        <!-- The TesseractOCR image topic -->
+        <param name="tesseract_image_topic" value="$(arg tesseract_ocr_image_topic)" />
+
+        <!-- The TesseractOCR result topic -->
+        <param name="tesseract_result_topic" value="$(arg tesseract_ocr_result_topic)" />
     </node>
 </launch>

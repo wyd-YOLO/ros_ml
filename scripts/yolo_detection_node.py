@@ -46,16 +46,31 @@ class YOLODetection:
         # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
         self.__rotation = rospy.get_param("~rotation", 0)
 
-        # cv_bridge
+        # The cv_bridge
         self.__cv_bridge = CvBridge()
 
+        # The frame index
+        self.__frame_idx = 0
+
         # The YOLO detection image publisher
-        yolo_image_topic = rospy.get_param("~yolo_image_topic", "yolo_detection_image")
-        self.__yolo_image_pub = rospy.Publisher(yolo_image_topic, Image, queue_size=0)
+        yolo_image_mod_0_topic = rospy.get_param("~yolo_image_mod_0_topic", "yolo_detection_mod_0_image")
+        self.__yolo_image_mod_0_pub = rospy.Publisher(yolo_image_mod_0_topic, Image, queue_size=0)
+        yolo_image_mod_1_topic = rospy.get_param("~yolo_image_mod_1_topic", "yolo_detection_mod_1_image")
+        self.__yolo_image_mod_1_pub = rospy.Publisher(yolo_image_mod_1_topic, Image, queue_size=0)
+        yolo_image_mod_2_topic = rospy.get_param("~yolo_image_mod_2_topic", "yolo_detection_mod_2_image")
+        self.__yolo_image_mod_2_pub = rospy.Publisher(yolo_image_mod_2_topic, Image, queue_size=0)
+        yolo_image_mod_3_topic = rospy.get_param("~yolo_image_mod_3_topic", "yolo_detection_mod_3_image")
+        self.__yolo_image_mod_3_pub = rospy.Publisher(yolo_image_mod_3_topic, Image, queue_size=0)
 
         # The YOLO detection result publisher
-        yolo_result_topic = rospy.get_param("~yolo_result_topic", "yolo_detection_result")
-        self.__yolo_result_pub = rospy.Publisher(yolo_result_topic, YoloResult, queue_size=0)
+        yolo_result_mod_0_topic = rospy.get_param("~yolo_result_mod_0_topic", "yolo_detection_mod_0_result")
+        self.__yolo_result_mod_0_pub = rospy.Publisher(yolo_result_mod_0_topic, YoloResult, queue_size=0)
+        yolo_result_mod_1_topic = rospy.get_param("~yolo_result_mod_1_topic", "yolo_detection_mod_1_result")
+        self.__yolo_result_mod_1_pub = rospy.Publisher(yolo_result_mod_1_topic, YoloResult, queue_size=0)
+        yolo_result_mod_2_topic = rospy.get_param("~yolo_result_mod_2_topic", "yolo_detection_mod_2_result")
+        self.__yolo_result_mod_2_pub = rospy.Publisher(yolo_result_mod_2_topic, YoloResult, queue_size=0)
+        yolo_result_mod_3_topic = rospy.get_param("~yolo_result_mod_3_topic", "yolo_detection_mod_3_result")
+        self.__yolo_result_mod_3_pub = rospy.Publisher(yolo_result_mod_3_topic, YoloResult, queue_size=0)
 
     def image_callback(self, image_msg):
         """!@brief The image callback function.
@@ -99,8 +114,20 @@ class YOLODetection:
         current_time = rospy.Time.now()
         yolo_image_pub_msg.header.stamp = current_time
         yolo_result.header.stamp = current_time
-        self.__yolo_image_pub.publish(yolo_image_pub_msg)
-        self.__yolo_result_pub.publish(yolo_result)
+        if self.__frame_idx % 4 == 0:
+            self.__yolo_image_mod_0_pub.publish(yolo_image_pub_msg)
+            self.__yolo_result_mod_0_pub.publish(yolo_result)
+        elif self.__frame_idx % 4 == 1:
+            self.__yolo_image_mod_1_pub.publish(yolo_image_pub_msg)
+            self.__yolo_result_mod_1_pub.publish(yolo_result)
+        elif self.__frame_idx % 4 == 2:
+            self.__yolo_image_mod_2_pub.publish(yolo_image_pub_msg)
+            self.__yolo_result_mod_2_pub.publish(yolo_result)
+        else:
+            self.__yolo_image_mod_3_pub.publish(yolo_image_pub_msg)
+            self.__yolo_result_mod_3_pub.publish(yolo_result)
+
+        self.__frame_idx = self.__frame_idx + 1
 
 
 def main(args):
