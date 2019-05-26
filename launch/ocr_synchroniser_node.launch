@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Run the OCRSynchroniser on the TesseractOCR output -->
+    <arg name="tesseract_image_mod_topic" default="/tesseract_ocr_node/tesseract_ocr_image_mod" />
+    <arg name="tesseract_result_mod_topic" default="/tesseract_ocr_node/tesseract_ocr_result_mod" />
+
+    <!-- Run the ocr_synchroniser_node -->
+    <node name="ocr_synchroniser_node" pkg="ros_ml" type="ocr_synchroniser_node" output="screen">
+        <!-- The modularised TesseractOCR image topic -->
+        <param name="tesseract_image_mod_topic" value="$(arg tesseract_image_mod_topic)" />
+
+        <!-- The modularised TesseractOCR result topic -->
+        <param name="tesseract_result_mod_topic" value="$(arg tesseract_result_mod_topic)" />
+
+        <!-- The synchronised TesseractOCR image topic -->
+        <param name="tesseract_image_syn_topic" value="tesseract_ocr_image_syn" />
+
+        <!-- The synchronised TesseractOCR result topic -->
+        <param name="tesseract_result_syn_topic" value="tesseract_ocr_result_syn" />
+    </node>
+</launch>

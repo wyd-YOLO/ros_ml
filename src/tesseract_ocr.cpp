@@ -28,14 +28,14 @@ TesseractOCR::TesseractOCR(ros::NodeHandle node) {
     // Initialize the ORCTesseract
     ocr_tesseract = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
 
-    // Initialize the TesseractOCR image publisher
-    node.param<std::string>("tesseract_image_topic", tesseract_image_topic, "tesseract_ocr_image");
+    // Initialize the modularised TesseractOCR image publisher
+    node.param<std::string>("tesseract_image_mod_topic", tesseract_image_mod_topic, "tesseract_ocr_image_mod");
     image_transport::ImageTransport it(node);
-    tesseract_image_pub = it.advertise(tesseract_image_topic, 1);
+    tesseract_image_mod_pub = it.advertise(tesseract_image_mod_topic, 1);
 
-    // Initialize the TesseractOCR result publisher
-    node.param<std::string>("tesseract_result_topic", tesseract_result_topic, "tesseract_ocr_result");
-    tesseract_result_pub = node.advertise<ros_ml::OCRResult>(tesseract_result_topic, 1);
+    // Initialize the modularised TesseractOCR result publisher
+    node.param<std::string>("tesseract_result_mod_topic", tesseract_result_mod_topic, "tesseract_ocr_result_mod");
+    tesseract_result_mod_pub = node.advertise<ros_ml::OCRResult>(tesseract_result_mod_topic, 1);
 }
 
 TesseractOCR::~TesseractOCR() {
@@ -138,10 +138,10 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
     // Publish the TesseractOCR image
     sensor_msgs::ImagePtr ocr_img;
     ocr_img = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-    ocr_img->header.stamp = ros::Time::now();
-    tesseract_image_pub.publish(ocr_img);
+    ocr_img->header.stamp = img_msg->header.stamp;
+    tesseract_image_mod_pub.publish(ocr_img);
 
     // Publish the TesseractOCR result
-    ocr_result.header.stamp = ros::Time::now();
-    tesseract_result_pub.publish(ocr_result);
+    ocr_result.header.stamp = img_msg->header.stamp;
+    tesseract_result_mod_pub.publish(ocr_result);
 }

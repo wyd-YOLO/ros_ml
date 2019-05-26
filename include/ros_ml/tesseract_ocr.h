@@ -50,11 +50,11 @@ class TesseractOCR {
 
     cv::Ptr<cv::text::OCRTesseract> ocr_tesseract;  //!< @brief The OCRTesseract object. @since 0.0.1
 
-    std::string tesseract_image_topic;               //!< @brief The TesseractOCR image topic. @since 0.0.1
-    image_transport::Publisher tesseract_image_pub;  //!< @brief The TesseractOCR image publisher. @since 0.0.1
+    std::string tesseract_image_mod_topic;               //!< @brief The modularised TesseractOCR image topic. @since 0.0.1
+    image_transport::Publisher tesseract_image_mod_pub;  //!< @brief The modularised TesseractOCR image publisher. @since 0.0.1
 
-    std::string tesseract_result_topic;   //!< @brief The TesseractOCR result topic. @since 0.0.1
-    ros::Publisher tesseract_result_pub;  //!< @brief The TesseractOCR result publisher. @since 0.0.1
+    std::string tesseract_result_mod_topic;   //!< @brief The modularised TesseractOCR result topic. @since 0.0.1
+    ros::Publisher tesseract_result_mod_pub;  //!< @brief The modularised TesseractOCR result publisher. @since 0.0.1
 
    public:
     /**

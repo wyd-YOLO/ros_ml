@@ -5,7 +5,7 @@
         <!-- The YOLO detection input image topic -->
         <param name="yolo_input_image_topic" value="/econ_camera/image_raw/compressed" />
 
-        <!-- Rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
+        <!-- The rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
         <param name="rotation" value="2" />
 
         <!-- The YOLO detection image topics -->

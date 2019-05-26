@@ -2,19 +2,19 @@
 <launch>
     <!-- Run the image_formater_node -->
     <node name="image_formater_node" pkg="ros_ml" type="image_formater_node" output="screen">
-        <!-- Frame rate -->
+        <!-- The frame rate -->
         <param name="frame_rate" value="1.0" />
 
-        <!-- Image topic -->
+        <!-- The image topic -->
         <param name="image_topic" value="/econ_camera/image_raw/compressed" />
 
-        <!-- Rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
+        <!-- The rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
         <param name="rotation" value="0" />
 
-        <!-- Saving directory -->
+        <!-- The saving directory -->
         <param name="save_directory" value="images/" />
 
-        <!-- Start index -->
+        <!-- The starting index -->
         <param name="start_index" value="0" />
     </node>
 </launch>

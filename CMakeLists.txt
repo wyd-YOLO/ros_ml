@@ -174,6 +174,11 @@ add_executable(tesseract_ocr_node
     src/tesseract_ocr.cpp)
 target_link_libraries(tesseract_ocr_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
+add_executable(ocr_synchroniser_node
+    src/ocr_synchroniser_node.cpp
+    src/ocr_synchroniser.cpp)
+target_link_libraries(ocr_synchroniser_node ${catkin_LIBRARIES})
+
 #############
 ## Install ##
 #############
@@ -203,6 +208,7 @@ install(PROGRAMS
 install(TARGETS
     image_formater_node
     tesseract_ocr_node
+    ocr_synchroniser_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -224,6 +230,7 @@ install(FILES
     launch/iamge_formater_node.launch
     launch/yolo_detection_node.launch
     launch/tesseract_ocr_node.launch
+    launch/ocr_synchroniser_node.launch
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
