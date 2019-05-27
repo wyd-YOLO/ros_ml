@@ -3,6 +3,7 @@
     <!-- Run the yolo_detection_node -->
     <node name="yolo_detection_node" pkg="ros_ml" type="yolo_detection_node.py" output="screen">
         <!-- The YOLO detection input image topic -->
+        <param name="yolo_compressed_topic" value="true" />
         <param name="yolo_input_image_topic" value="/econ_camera/image_raw/compressed" />
 
         <!-- The rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->

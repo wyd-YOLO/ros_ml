@@ -3,7 +3,8 @@
     <!-- Run the yolo_detection_node -->
     <node name="yolo_detection_node" pkg="ros_ml" type="yolo_detection_node.py" output="screen">
         <!-- The YOLO detection input image topic -->
-        <param name="yolo_input_image_topic" value="/image_rectifier_node/image_rect/compressed" />
+        <param name="yolo_compressed_topic" value="false" />
+        <param name="yolo_input_image_topic" value="/image_rectifier_node/image_rect" />
 
         <!-- The rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
         <param name="rotation" value="0" />

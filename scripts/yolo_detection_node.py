@@ -39,9 +39,16 @@ class YOLODetection:
         }
         self.__tfnet = TFNet(TFNET_OPTIONS)
 
+        # Check whether the input image topic is compressed
+        self.__yolo_compressed_topic = rospy.get_param("~yolo_compressed_topic", True)
+
         # The YOLO detection input image subscriber
         yolo_input_image_topic = rospy.get_param("~yolo_input_image_topic", "/econ_camera/image_raw/compressed")
-        self.__yolo_image_sub = rospy.Subscriber(yolo_input_image_topic, CompressedImage, self.image_callback)
+        self.__yolo_image_sub = None
+        if self.__yolo_compressed_topic == True:
+            self.__yolo_image_sub = rospy.Subscriber(yolo_input_image_topic, CompressedImage, self.image_callback)
+        else:
+            self.__yolo_image_sub = rospy.Subscriber(yolo_input_image_topic, Image, self.image_callback)
 
         # The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]
         self.__rotation = rospy.get_param("~rotation", 0)
@@ -78,8 +85,15 @@ class YOLODetection:
         """
 
         # Decode the image
-        np_arr = np.fromstring(image_msg.data, np.uint8)
-        image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        image = None
+        if self.__yolo_compressed_topic == True:
+            np_arr = np.fromstring(image_msg.data, np.uint8)
+            image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        else:
+            try:
+                image = self.__cv_bridge.imgmsg_to_cv2(image_msg, "bgr8")
+            except CvBridgeError as e:
+                print(e)
 
         # Rotate the image
         if self.__rotation != 0:
