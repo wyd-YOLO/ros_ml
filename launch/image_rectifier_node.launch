@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Run the image_rectifier_node -->
+    <node name="image_rectifier_node" pkg="ros_ml" type="image_rectifier_node" output="screen">
+        <!-- The distorted image topic -->
+        <param name="image_dis_topic" value="/econ_camera/image_raw/compressed" />
+
+        <!-- The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270] -->
+        <param name="rotation" value="2" />
+
+        <!-- The rectified image topic -->
+        <param name="image_rect_topic" value="image_rect" />
+    </node>
+</launch>

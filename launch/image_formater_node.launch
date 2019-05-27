@@ -8,7 +8,7 @@
         <!-- The image topic -->
         <param name="image_topic" value="/econ_camera/image_raw/compressed" />
 
-        <!-- The rotation [0, 1, 2, 3] <_> [0, 90, 180, 270] -->
+        <!-- The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270] -->
         <param name="rotation" value="0" />
 
         <!-- The saving directory -->

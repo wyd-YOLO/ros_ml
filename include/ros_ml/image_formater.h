@@ -63,7 +63,7 @@ class ImageFormater {
      * @param[in] rotation The rotation value.
      * @since 0.0.1
      */
-    void rotate_image(const cv::Mat src, cv::Mat& dst, int rotation);
+    static void rotate_image(const cv::Mat src, cv::Mat& dst, int rotation);
 
     /**
      * @brief The compressed image callback function.

@@ -169,6 +169,12 @@ add_executable(image_formater_node
     src/image_formater.cpp)
 target_link_libraries(image_formater_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
+add_executable(image_rectifier_node
+    src/image_rectifier_node.cpp
+    src/image_formater.cpp
+    src/image_rectifier.cpp)
+target_link_libraries(image_rectifier_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
+
 add_executable(tesseract_ocr_node
     src/tesseract_ocr_node.cpp
     src/tesseract_ocr.cpp)
@@ -207,6 +213,7 @@ install(PROGRAMS
 
 install(TARGETS
     image_formater_node
+    image_rectifier_node
     tesseract_ocr_node
     ocr_synchroniser_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -227,7 +234,8 @@ install(TARGETS
 # )
 
 install(FILES
-    launch/iamge_formater_node.launch
+    launch/image_formater_node.launch
+    launch/image_rectifier_node.launch
     launch/yolo_detection_node.launch
     launch/tesseract_ocr_node.launch
     launch/ocr_synchroniser_node.launch
