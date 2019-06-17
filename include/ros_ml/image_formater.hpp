@@ -1,5 +1,5 @@
 /**
- * @file image_formater.h
+ * @file image_formater.hpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
  * @brief The header file of the ImageFormater class.
  * @since 0.0.1
@@ -8,8 +8,8 @@
  * 
  */
 
-#ifndef _IMAGE_FORMATER_H_
-#define _IMAGE_FORMATER_H_
+#ifndef IMAGE_FORMATER_HPP
+#define IMAGE_FORMATER_HPP
 
 #include <iostream>
 #include <string>
@@ -82,4 +82,4 @@ class ImageFormater {
     float get_frame_rate();
 };
 
-#endif /* _IMAGE_FORMATER_H_ */
+#endif  // IMAGE_FORMATER_HPP

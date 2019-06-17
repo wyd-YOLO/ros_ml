@@ -8,7 +8,7 @@
  * 
  */
 
-#include "ros_ml/image_formater.h"
+#include "ros_ml/image_formater.hpp"
 
 /**
  * @brief The main function.

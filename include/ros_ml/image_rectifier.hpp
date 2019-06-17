@@ -1,5 +1,5 @@
 /**
- * @file image_rectifier.h
+ * @file image_rectifier.hpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
  * @brief The header file of the ImageRectifier class.
  * @since 0.0.1
@@ -8,8 +8,8 @@
  * 
  */
 
-#ifndef _IMAGE_RECTIFIER_H_
-#define _IMAGE_RECTIFIER_H_
+#ifndef IMAGE_RECTIFIER_HPP
+#define IMAGE_RECTIFIER_HPP
 
 #include <iostream>
 #include <string>
@@ -21,7 +21,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "ros_ml/image_formater.h"
+#include "ros_ml/image_formater.hpp"
 
 /**
  * @brief A class to rectify the distorted image.
@@ -70,4 +70,4 @@ class ImageRectifier {
     void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& msg);
 };
 
-#endif /* _IMAGE_RECTIFIER_H_ */
+#endif  // IMAGE_RECTIFIER_HPP

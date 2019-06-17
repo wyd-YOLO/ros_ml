@@ -1,5 +1,5 @@
 /**
- * @file tesseract_ocr.h
+ * @file tesseract_ocr.hpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
  * @brief The header file of the TesseractOCR class.
  * @since 0.0.1
@@ -8,8 +8,8 @@
  * 
  */
 
-#ifndef _TESSERACT_OCR_H_
-#define _TESSERACT_OCR_H_
+#ifndef TESSERACT_OCR_HPP
+#define TESSERACT_OCR_HPP
 
 #include <iostream>
 #include <string>
@@ -83,4 +83,4 @@ class TesseractOCR {
     void callback(const sensor_msgs::ImageConstPtr& img_msg, const ros_ml::YoloResultConstPtr& result_msg);
 };
 
-#endif /* _TESSERACT_OCR_H_ */
+#endif  // TESSERACT_OCR_HPP

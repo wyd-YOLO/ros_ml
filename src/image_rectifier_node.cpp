@@ -8,7 +8,7 @@
  * 
  */
 
-#include "ros_ml/image_rectifier.h"
+#include "ros_ml/image_rectifier.hpp"
 
 /**
  * @brief The main function.

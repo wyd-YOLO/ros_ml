@@ -1,5 +1,5 @@
 /**
- * @file ocr_synchronizer.h
+ * @file ocr_synchronizer.hpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
  * @brief The header file of the OCRSynchroniser class.
  * @since 0.0.1
@@ -8,8 +8,8 @@
  * 
  */
 
-#ifndef _OCR_SYNCHRONISER_H_
-#define _OCR_SYNCHRONISER_H_
+#ifndef OCR_SYNCHRONISER_HPP
+#define OCR_SYNCHRONISER_HPP
 
 #include <iostream>
 #include <string>
@@ -81,4 +81,4 @@ class OCRSynchroniser {
     void tesseract_result_callback(const ros_ml::OCRResultConstPtr& result_msg);
 };
 
-#endif /* _OCR_SYNCHRONISER_H_ */
+#endif  // OCR_SYNCHRONISER_HPP

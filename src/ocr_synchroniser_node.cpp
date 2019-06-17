@@ -8,7 +8,7 @@
  * 
  */
 
-#include "ros_ml/ocr_synchroniser.h"
+#include "ros_ml/ocr_synchroniser.hpp"
 
 /**
  * @brief The main function.

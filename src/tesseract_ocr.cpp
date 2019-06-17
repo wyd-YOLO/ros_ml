@@ -8,32 +8,32 @@
  * 
  */
 
-#include "ros_ml/tesseract_ocr.h"
+#include "ros_ml/tesseract_ocr.hpp"
 
 TesseractOCR::TesseractOCR(ros::NodeHandle node) {
     this->node = node;
 
-    // Initialize the YOLO detection image subscriber
+    // Initialise the YOLO detection image subscriber
     node.param<std::string>("yolo_image_topic", yolo_image_topic, "yolo_detection_image");
     yolo_image_sub.subscribe(node, yolo_image_topic, 1);
 
-    // Initialize the YOLO detection result subscriber
+    // Initialise the YOLO detection result subscriber
     node.param<std::string>("yolo_result_topic", yolo_result_topic, "yolo_detection_result");
     yolo_result_sub.subscribe(node, yolo_result_topic, 1);
 
-    // Initialize the synchronizer
+    // Initialise the synchronizer
     sync.reset(new Sync(MySyncPolicy(10), yolo_image_sub, yolo_result_sub));
     sync->registerCallback(boost::bind(&TesseractOCR::callback, this, _1, _2));
 
-    // Initialize the ORCTesseract
+    // Initialise the ORCTesseract
     ocr_tesseract = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
 
-    // Initialize the modularised TesseractOCR image publisher
+    // Initialise the modularised TesseractOCR image publisher
     node.param<std::string>("tesseract_image_mod_topic", tesseract_image_mod_topic, "tesseract_ocr_image_mod");
     image_transport::ImageTransport it(node);
     tesseract_image_mod_pub = it.advertise(tesseract_image_mod_topic, 1);
 
-    // Initialize the modularised TesseractOCR result publisher
+    // Initialise the modularised TesseractOCR result publisher
     node.param<std::string>("tesseract_result_mod_topic", tesseract_result_mod_topic, "tesseract_ocr_result_mod");
     tesseract_result_mod_pub = node.advertise<ros_ml::OCRResult>(tesseract_result_mod_topic, 1);
 }

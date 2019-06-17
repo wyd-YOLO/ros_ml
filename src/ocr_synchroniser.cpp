@@ -8,29 +8,29 @@
  * 
  */
 
-#include "ros_ml/ocr_synchroniser.h"
+#include "ros_ml/ocr_synchroniser.hpp"
 
 OCRSynchroniser::OCRSynchroniser(ros::NodeHandle node) {
     this->node = node;
 
-    // Initialize the modularised TesseractOCR image subscriber
+    // Initialise the modularised TesseractOCR image subscriber
     node.param<std::string>("tesseract_image_mod_topic", tesseract_image_mod_topic, "tesseract_ocr_image_mod");
     tesseract_image_mod_sub = node.subscribe(tesseract_image_mod_topic, 1, &OCRSynchroniser::tesseract_image_callback, this);
     latest_image_stamp.sec = 0;
     latest_image_stamp.nsec = 0;
 
-    // Initialize the modularised TesseractOCR result subscriber
+    // Initialise the modularised TesseractOCR result subscriber
     node.param<std::string>("tesseract_result_mod_topic", tesseract_result_mod_topic, "tesseract_ocr_result_mod");
     tesseract_result_mod_sub = node.subscribe(tesseract_result_mod_topic, 1, &OCRSynchroniser::tesseract_result_callback, this);
     latest_result_stamp.sec = 0;
     latest_result_stamp.nsec = 0;
 
-    // Initialize the synchronised TesseractOCR image publisher
+    // Initialise the synchronised TesseractOCR image publisher
     node.param<std::string>("tesseract_image_syn_topic", tesseract_image_syn_topic, "tesseract_ocr_image_syn");
     image_transport::ImageTransport it(node);
     tesseract_image_syn_pub = it.advertise(tesseract_image_syn_topic, 1);
 
-    // Initialize the synchronised TesseractOCR result publisher
+    // Initialise the synchronised TesseractOCR result publisher
     node.param<std::string>("tesseract_result_syn_topic", tesseract_result_syn_topic, "tesseract_ocr_result_syn");
     tesseract_result_syn_pub = node.advertise<ros_ml::OCRResult>(tesseract_result_syn_topic, 1);
 }

@@ -8,7 +8,7 @@
  * 
  */
 
-#include "ros_ml/tesseract_ocr.h"
+#include "ros_ml/tesseract_ocr.hpp"
 
 /**
  * @brief The main function.
