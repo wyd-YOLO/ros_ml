@@ -31,18 +31,18 @@
  */
 class ImageRectifier {
    private:
-    ros::NodeHandle node;  //!< @brief The ros node handle. @since 0.0.1
+    ros::NodeHandle node_;  //!< @brief The ros node handle. @since 0.0.1
 
-    std::string image_dis_topic;    //!< @brief The distorted image topic. @since 0.0.1
-    ros::Subscriber image_dis_sub;  //!< @brief The distorted image subsriber. @since 0.0.1
+    std::string image_dis_topic_;    //!< @brief The distorted image topic. @since 0.0.1
+    ros::Subscriber image_dis_sub_;  //!< @brief The distorted image subsriber. @since 0.0.1
 
-    std::string image_rect_topic;               //!< @brief The rectified image topic. @since 0.0.1
-    image_transport::Publisher image_rect_pub;  //!< @brief The rectified image publisher. @since 0.0.1
+    std::string image_rect_topic_;               //!< @brief The rectified image topic. @since 0.0.1
+    image_transport::Publisher image_rect_pub_;  //!< @brief The rectified image publisher. @since 0.0.1
 
-    cv::Mat came_matrix;                 //!< @brief The camera matrix. @since 0.0.1
-    cv::Mat dis_coef;                    //!< @brief The camera distortion coefficients. @since 0.0.1
-    cv::Mat undist_map_1, undist_map_2;  //!< @brief The undistortion rectify maps. @since 0.0.1
-    int rotation;                        //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+    cv::Mat camera_matrix_;                //!< @brief The camera matrix. @since 0.0.1
+    cv::Mat dis_coef_;                     //!< @brief The camera distortion coefficients. @since 0.0.1
+    cv::Mat undist_map_1_, undist_map_2_;  //!< @brief The undistortion rectify maps. @since 0.0.1
+    int rotation_;                         //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
 
    public:
     /**

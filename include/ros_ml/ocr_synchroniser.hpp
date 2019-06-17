@@ -1,5 +1,5 @@
 /**
- * @file ocr_synchronizer.hpp
+ * @file ocr_synchroniser.hpp
  * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
  * @brief The header file of the OCRSynchroniser class.
  * @since 0.0.1
@@ -31,21 +31,21 @@
  */
 class OCRSynchroniser {
    private:
-    ros::NodeHandle node;  //!< @brief The ros node handle. @since 0.0.1
+    ros::NodeHandle node_;  //!< @brief The ros node handle. @since 0.0.1
 
-    std::string tesseract_image_mod_topic;    //!< @brief The modularised TesseractOCR image topic. @since 0.0.1
-    ros::Subscriber tesseract_image_mod_sub;  //!< @brief The modularised TesseractOCR image subscriber. @since 0.0.1
-    ros::Time latest_image_stamp;             //!< @brief The latest timestamp of the TesseractOCR image. @since 0.0.1
+    std::string tesseract_image_mod_topic_;    //!< @brief The modularised TesseractOCR image topic. @since 0.0.1
+    ros::Subscriber tesseract_image_mod_sub_;  //!< @brief The modularised TesseractOCR image subscriber. @since 0.0.1
+    ros::Time latest_image_stamp_;             //!< @brief The latest timestamp of the TesseractOCR image. @since 0.0.1
 
-    std::string tesseract_result_mod_topic;    //!< @brief The modularised TesseractOCR result topic. @since 0.0.1
-    ros::Subscriber tesseract_result_mod_sub;  //!< @brief The modularised TesseractOCR result subscriber. @since 0.0.1
-    ros::Time latest_result_stamp;             //!< @brief The latest timestamp of the TesseractOCR result. @since 0.0.1
+    std::string tesseract_result_mod_topic_;    //!< @brief The modularised TesseractOCR result topic. @since 0.0.1
+    ros::Subscriber tesseract_result_mod_sub_;  //!< @brief The modularised TesseractOCR result subscriber. @since 0.0.1
+    ros::Time latest_result_stamp_;             //!< @brief The latest timestamp of the TesseractOCR result. @since 0.0.1
 
-    std::string tesseract_image_syn_topic;               //!< @brief The synchronised TesseractOCR image topic. @since 0.0.1
-    image_transport::Publisher tesseract_image_syn_pub;  //!< @brief The synchronised TesseractOCR image publisher. @since 0.0.1
+    std::string tesseract_image_syn_topic_;               //!< @brief The synchronised TesseractOCR image topic. @since 0.0.1
+    image_transport::Publisher tesseract_image_syn_pub_;  //!< @brief The synchronised TesseractOCR image publisher. @since 0.0.1
 
-    std::string tesseract_result_syn_topic;   //!< @brief The synchronised TesseractOCR result topic. @since 0.0.1
-    ros::Publisher tesseract_result_syn_pub;  //!< @brief The synchronised TesseractOCR result publisher. @since 0.0.1
+    std::string tesseract_result_syn_topic_;   //!< @brief The synchronised TesseractOCR result topic. @since 0.0.1
+    ros::Publisher tesseract_result_syn_pub_;  //!< @brief The synchronised TesseractOCR result publisher. @since 0.0.1
 
    public:
     /**

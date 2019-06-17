@@ -29,14 +29,14 @@
  */
 class ImageFormater {
    private:
-    ros::NodeHandle node;              //!< @brief The ros node handle. @since 0.0.1
-    ros::Subscriber image_subscriber;  //!< @brief The image subscriber. @since 0.0.1
+    ros::NodeHandle node_;              //!< @brief The ros node handle. @since 0.0.1
+    ros::Subscriber image_subscriber_;  //!< @brief The image subscriber. @since 0.0.1
 
-    float frame_rate;            //!< @brief The frame rate. @since 0.0.1
-    std::string image_topic;     //!< @brief The image topic. @since 0.0.1
-    int rotation;                //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
-    std::string save_directory;  //!< @brief The saving dicrectory. @since 0.0.1
-    int start_index;             //!< @brief The start index. @since 0.0.1
+    float frame_rate_;            //!< @brief The frame rate. @since 0.0.1
+    std::string image_topic_;     //!< @brief The image topic. @since 0.0.1
+    int rotation_;                //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+    std::string save_directory_;  //!< @brief The saving dicrectory. @since 0.0.1
+    int start_index_;             //!< @brief The start index. @since 0.0.1
 
    public:
     /**
@@ -63,7 +63,7 @@ class ImageFormater {
      * @param[in] rotation The rotation value.
      * @since 0.0.1
      */
-    static void rotate_image(const cv::Mat src, cv::Mat& dst, int rotation);
+    static void rotate_image(const cv::Mat src, cv::Mat& dst, const int rotation);
 
     /**
      * @brief The compressed image callback function.
