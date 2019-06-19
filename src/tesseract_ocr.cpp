@@ -10,75 +10,75 @@
 
 #include "ros_ml/tesseract_ocr.hpp"
 
-TesseractOCR::TesseractOCR(ros::NodeHandle node)
-    : node_(node) {
+TesseractOCR::TesseractOCR(ros::NodeHandle node_handle)
+    : node_handle_(node_handle) {
     // Initialise the YOLO detection image subscriber
-    node_.param<std::string>("yolo_image_topic", yolo_image_topic_, "yolo_detection_image");
-    yolo_image_sub_.subscribe(node_, yolo_image_topic_, 1);
+    node_handle_.param<std::string>("yolo_image_topic", yolo_image_topic_, "yolo_detection_image");
+    yolo_image_subscriber_.subscribe(node_handle_, yolo_image_topic_, 1);
 
     // Initialise the YOLO detection result subscriber
-    node_.param<std::string>("yolo_result_topic", yolo_result_topic_, "yolo_detection_result");
-    yolo_result_sub_.subscribe(node_, yolo_result_topic_, 1);
+    node_handle_.param<std::string>("yolo_result_topic", yolo_result_topic_, "yolo_detection_result");
+    yolo_result_subscriber_.subscribe(node_handle_, yolo_result_topic_, 1);
 
     // Initialise the synchroniser
-    sync_ptr_.reset(new Sync(MySyncPolicy(10), yolo_image_sub_, yolo_result_sub_));
-    sync_ptr_->registerCallback(boost::bind(&TesseractOCR::callback, this, _1, _2));
+    synchroniser_ptr_.reset(new ApproximateSynchroniser(ApproximatePolicy(10), yolo_image_subscriber_, yolo_result_subscriber_));
+    synchroniser_ptr_->registerCallback(boost::bind(&TesseractOCR::yolo_callback, this, _1, _2));
 
     // Initialise the ORCTesseract
-    ocr_tesseract_ = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
+    ocr_tesseract_ptr_ = cv::text::OCRTesseract::create(NULL, "eng", "-0123456789", cv::text::OEM_DEFAULT, cv::text::PSM_SINGLE_BLOCK);
 
     // Initialise the modularised TesseractOCR image publisher
-    node_.param<std::string>("tesseract_image_mod_topic", tesseract_image_mod_topic_, "tesseract_ocr_image_mod");
-    image_transport::ImageTransport it(node_);
-    tesseract_image_mod_pub_ = it.advertise(tesseract_image_mod_topic_, 1);
+    node_handle_.param<std::string>("tesseract_image_mod_topic", modularised_image_topic_, "tesseract_ocr_image_mod");
+    image_transport::ImageTransport image_transport(node_handle_);
+    modularised_image_publisher_ = image_transport.advertise(modularised_image_topic_, 1);
 
     // Initialise the modularised TesseractOCR result publisher
-    node_.param<std::string>("tesseract_result_mod_topic", tesseract_result_mod_topic_, "tesseract_ocr_result_mod");
-    tesseract_result_mod_pub_ = node_.advertise<ros_ml::OCRResult>(tesseract_result_mod_topic_, 1);
+    node_handle_.param<std::string>("tesseract_result_mod_topic", modularised_result_topic_, "tesseract_ocr_result_mod");
+    modularised_result_publisher_ = node_handle_.advertise<ros_ml::OCRResult>(modularised_result_topic_, 1);
 }
 
 TesseractOCR::~TesseractOCR() {
     ros::shutdown();
 }
 
-void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros_ml::YoloResultConstPtr& result_msg) {
+void TesseractOCR::yolo_callback(const sensor_msgs::ImageConstPtr& image_message, const ros_ml::YoloResultConstPtr& yolo_result_message) {
     // Decode the image message
-    cv::Mat frame;
+    cv::Mat image;
     try {
-        frame = cv_bridge::toCvShare(img_msg, "bgr8")->image;
+        image = cv_bridge::toCvShare(image_message, "bgr8")->image;
     } catch (cv_bridge::Exception& e) {
-        ROS_ERROR("Could not convert from '%s' to 'bgr8'.", img_msg->encoding.c_str());
+        ROS_ERROR("Could not convert from '%s' to 'bgr8'.", image_message->encoding.c_str());
     }
 
     // The TesseractOCR result
-    ros_ml::OCRResult ocr_result;
+    ros_ml::OCRResult ocr_result_message;
 
-    // For each location got from YOLO detection
-    for (int i_l = 0; i_l < result_msg->giant_locations.size(); ++i_l) {
+    // For each location got from the YOLO detection result
+    for (int i_l = 0; i_l < yolo_result_message->giant_locations.size(); ++i_l) {
         std::string output;
         std::vector<cv::Rect> boxes;
         std::vector<std::string> words;
         std::vector<float> confidences;
-        cv::Rect rect(cv::Point(result_msg->giant_locations[i_l].tl.x, result_msg->giant_locations[i_l].tl.y),
-                      cv::Point(result_msg->giant_locations[i_l].br.x, result_msg->giant_locations[i_l].br.y));
-        cv::Mat cropped_image = frame(rect).clone();
+        cv::Rect rect(cv::Point(yolo_result_message->giant_locations[i_l].tl.x, yolo_result_message->giant_locations[i_l].tl.y),
+                      cv::Point(yolo_result_message->giant_locations[i_l].br.x, yolo_result_message->giant_locations[i_l].br.y));
+        cv::Mat cropped_image = image(rect).clone();
         cv::cvtColor(cropped_image, cropped_image, cv::COLOR_BGR2GRAY);
 
-        // Run OCRTesseract
-        ocr_tesseract_->run(cropped_image, output, &boxes, &words, &confidences, cv::text::OCR_LEVEL_WORD);
+        // Run the OCRTesseract
+        ocr_tesseract_ptr_->run(cropped_image, output, &boxes, &words, &confidences, cv::text::OCR_LEVEL_WORD);
 
         // Filter the OCRTesseract output to get the location
         for (int w = 0; w < words.size(); ++w) {
             std::string word = words[w];
             if (word.length() >= 8) {
                 // Find the two positions of '-' letters
-                int pos_1 = 0, pos_2 = 0;
+                int first_position = 0, second_position = 0;
                 for (int i = 0; i < word.length(); ++i) {
                     if (word.c_str()[i] == '-') {
-                        pos_1 = i;
+                        first_position = i;
                         for (int j = i + 1; j < word.length(); ++j) {
                             if (word.c_str()[j] == '-') {
-                                pos_2 = j;
+                                second_position = j;
                                 break;
                             }
                         }
@@ -88,59 +88,59 @@ void TesseractOCR::callback(const sensor_msgs::ImageConstPtr& img_msg, const ros
 
                 // If the two positions of '-' letters are separated by an one digit number
                 // and there are more than 4 digits before the first position
-                if (pos_2 - pos_1 == 2 && pos_1 >= 4) {
-                    std::string result = word.substr(pos_1 - 4, 8);
-                    bool good_result = true;
+                if (second_position - first_position == 2 && first_position >= 4) {
+                    std::string result = word.substr(first_position - 4, 8);
+                    bool is_a_good_result = true;
                     for (int i = 0; i < word.length(); ++i) {
                         if (result.c_str()[i] == ' ') {
-                            good_result = false;
+                            is_a_good_result = false;
                         }
                     }
-                    if (good_result) {
+                    if (is_a_good_result) {
                         ros_ml::OCRObject ocr_object;
-                        ocr_object.yolo_confidence = result_msg->giant_locations[i_l].confidence;
+                        ocr_object.yolo_confidence = yolo_result_message->giant_locations[i_l].confidence;
                         ocr_object.ocr_confidence = confidences[w] / 100.0f;
-                        ocr_object.data = word.substr(pos_1 - 4, 8);
-                        ocr_object.tl.x = boxes[w].tl().x + result_msg->giant_locations[i_l].tl.x;
-                        ocr_object.tl.y = boxes[w].tl().y + result_msg->giant_locations[i_l].tl.y;
-                        ocr_object.br.x = boxes[w].br().x + result_msg->giant_locations[i_l].tl.x;
-                        ocr_object.br.y = boxes[w].br().y + result_msg->giant_locations[i_l].tl.y;
-                        ocr_result.giant_locations.push_back(ocr_object);
+                        ocr_object.data = word.substr(first_position - 4, 8);
+                        ocr_object.tl.x = boxes[w].tl().x + yolo_result_message->giant_locations[i_l].tl.x;
+                        ocr_object.tl.y = boxes[w].tl().y + yolo_result_message->giant_locations[i_l].tl.y;
+                        ocr_object.br.x = boxes[w].br().x + yolo_result_message->giant_locations[i_l].tl.x;
+                        ocr_object.br.y = boxes[w].br().y + yolo_result_message->giant_locations[i_l].tl.y;
+                        ocr_result_message.giant_locations.push_back(ocr_object);
                     }
                 }
             }
         }
     }
 
-    // Draw YOLO detection result for giant locations
-    for (int i = 0; i < result_msg->giant_locations.size(); ++i) {
-        cv::Point pt1 = cv::Point(result_msg->giant_locations[i].tl.x, result_msg->giant_locations[i].tl.y);
-        cv::Point pt2 = cv::Point(result_msg->giant_locations[i].br.x, result_msg->giant_locations[i].br.y);
-        cv::rectangle(frame, pt1, pt2, cv::Scalar(255, 0, 0), 2);
+    // Draw the YOLO detection result for giant locations
+    for (int i = 0; i < yolo_result_message->giant_locations.size(); ++i) {
+        cv::Point top_left = cv::Point(yolo_result_message->giant_locations[i].tl.x, yolo_result_message->giant_locations[i].tl.y);
+        cv::Point bottom_right = cv::Point(yolo_result_message->giant_locations[i].br.x, yolo_result_message->giant_locations[i].br.y);
+        cv::rectangle(image, top_left, bottom_right, cv::Scalar(255, 0, 0), 2);
     }
 
-    // Draw YOLO detection result for qr tags
-    for (int i = 0; i < result_msg->qr_tags.size(); ++i) {
-        cv::Point pt1 = cv::Point(result_msg->qr_tags[i].tl.x, result_msg->qr_tags[i].tl.y);
-        cv::Point pt2 = cv::Point(result_msg->qr_tags[i].br.x, result_msg->qr_tags[i].br.y);
-        cv::rectangle(frame, pt1, pt2, cv::Scalar(0, 0, 255), 2);
+    // Draw the YOLO detection result for qr tags
+    for (int i = 0; i < yolo_result_message->qr_tags.size(); ++i) {
+        cv::Point top_left = cv::Point(yolo_result_message->qr_tags[i].tl.x, yolo_result_message->qr_tags[i].tl.y);
+        cv::Point bottom_right = cv::Point(yolo_result_message->qr_tags[i].br.x, yolo_result_message->qr_tags[i].br.y);
+        cv::rectangle(image, top_left, bottom_right, cv::Scalar(0, 0, 255), 2);
     }
 
-    // Draw TesseractOCR result for giant locaitons
-    for (int i = 0; i < ocr_result.giant_locations.size(); ++i) {
-        cv::Point pt1 = cv::Point(ocr_result.giant_locations[i].tl.x, ocr_result.giant_locations[i].tl.y);
-        cv::Point pt2 = cv::Point(ocr_result.giant_locations[i].br.x, ocr_result.giant_locations[i].br.y);
-        cv::rectangle(frame, pt1, pt2, cv::Scalar(0, 255, 0), 2);
-        cv::putText(frame, ocr_result.giant_locations[i].data, pt1, 1, 2, cv::Scalar(0, 255, 0), 2);
+    // Draw the TesseractOCR result for giant locaitons
+    for (int i = 0; i < ocr_result_message.giant_locations.size(); ++i) {
+        cv::Point top_left = cv::Point(ocr_result_message.giant_locations[i].tl.x, ocr_result_message.giant_locations[i].tl.y);
+        cv::Point bottom_right = cv::Point(ocr_result_message.giant_locations[i].br.x, ocr_result_message.giant_locations[i].br.y);
+        cv::rectangle(image, top_left, bottom_right, cv::Scalar(0, 255, 0), 2);
+        cv::putText(image, ocr_result_message.giant_locations[i].data, top_left, 1, 2, cv::Scalar(0, 255, 0), 2);
     }
 
     // Publish the TesseractOCR image
-    sensor_msgs::ImagePtr ocr_img;
-    ocr_img = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-    ocr_img->header.stamp = img_msg->header.stamp;
-    tesseract_image_mod_pub_.publish(ocr_img);
+    sensor_msgs::ImagePtr ocr_image_message;
+    ocr_image_message = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+    ocr_image_message->header.stamp = image_message->header.stamp;
+    modularised_image_publisher_.publish(ocr_image_message);
 
     // Publish the TesseractOCR result
-    ocr_result.header.stamp = img_msg->header.stamp;
-    tesseract_result_mod_pub_.publish(ocr_result);
+    ocr_result_message.header.stamp = image_message->header.stamp;
+    modularised_result_publisher_.publish(ocr_result_message);
 }

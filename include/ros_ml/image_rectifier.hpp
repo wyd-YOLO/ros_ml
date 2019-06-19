@@ -31,27 +31,27 @@
  */
 class ImageRectifier {
    private:
-    ros::NodeHandle node_;  //!< @brief The ros node handle. @since 0.0.1
+    ros::NodeHandle node_handle_;  //!< @brief The ros node handle. @since 0.0.1
 
-    std::string image_dis_topic_;    //!< @brief The distorted image topic. @since 0.0.1
-    ros::Subscriber image_dis_sub_;  //!< @brief The distorted image subsriber. @since 0.0.1
+    std::string distorted_image_topic_;           //!< @brief The distorted image topic. @since 0.0.1
+    ros::Subscriber distorted_image_subscriber_;  //!< @brief The distorted image subsriber. @since 0.0.1
 
-    std::string image_rect_topic_;               //!< @brief The rectified image topic. @since 0.0.1
-    image_transport::Publisher image_rect_pub_;  //!< @brief The rectified image publisher. @since 0.0.1
+    std::string rectified_image_topic_;                     //!< @brief The rectified image topic. @since 0.0.1
+    image_transport::Publisher rectified_image_publisher_;  //!< @brief The rectified image publisher. @since 0.0.1
 
-    cv::Mat camera_matrix_;                //!< @brief The camera matrix. @since 0.0.1
-    cv::Mat dis_coef_;                     //!< @brief The camera distortion coefficients. @since 0.0.1
-    cv::Mat undist_map_1_, undist_map_2_;  //!< @brief The undistortion rectify maps. @since 0.0.1
-    int rotation_;                         //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+    cv::Mat camera_matrix_;                            //!< @brief The camera matrix. @since 0.0.1
+    cv::Mat distortion_coefficients_;                  //!< @brief The camera distortion coefficients. @since 0.0.1
+    cv::Mat undistortion_map_1_, undistortion_map_2_;  //!< @brief The undistortion rectify maps. @since 0.0.1
+    int rotation_;                                     //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
 
    public:
     /**
      * @brief Construct a new ImageRectifier object.
      * 
-     * @param[in] node The ros node handle.
+     * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    ImageRectifier(ros::NodeHandle node);
+    ImageRectifier(ros::NodeHandle node_handle);
 
     /**
      * @brief Destroy the ImageRectifier object.
@@ -64,10 +64,10 @@ class ImageRectifier {
     /**
      * @brief The compressed image callback function.
      * 
-     * @param[in] msg The image message.
+     * @param[in] compressed_image_message The image message.
      * @since 0.0.1
      */
-    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& msg);
+    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& compressed_image_message);
 };
 
 #endif  // IMAGE_RECTIFIER_HPP

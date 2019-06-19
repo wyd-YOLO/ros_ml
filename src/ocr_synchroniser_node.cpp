@@ -20,9 +20,8 @@
  */
 int main(int argc, char** argv) {
     ros::init(argc, argv, "tesseract_orc");
-    ros::NodeHandle node("~");
-    OCRSynchroniser ocr_synchroniser(node);
-
+    ros::NodeHandle node_handle("~");
+    OCRSynchroniser ocr_synchroniser(node_handle);
     ros::spin();
     return 0;
 }

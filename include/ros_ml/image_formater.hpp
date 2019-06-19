@@ -29,23 +29,27 @@
  */
 class ImageFormater {
    private:
-    ros::NodeHandle node_;              //!< @brief The ros node handle. @since 0.0.1
+    ros::NodeHandle node_handle_;  //!< @brief The ros node handle. @since 0.0.1
+
+    std::string image_topic_;           //!< @brief The image topic. @since 0.0.1
     ros::Subscriber image_subscriber_;  //!< @brief The image subscriber. @since 0.0.1
 
-    float frame_rate_;            //!< @brief The frame rate. @since 0.0.1
-    std::string image_topic_;     //!< @brief The image topic. @since 0.0.1
-    int rotation_;                //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+    float frame_rate_;  //!< @brief The frame rate. @since 0.0.1
+
+    int rotation_;  //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+
+    int start_index_;  //!< @brief The start index. @since 0.0.1
+
     std::string save_directory_;  //!< @brief The saving dicrectory. @since 0.0.1
-    int start_index_;             //!< @brief The start index. @since 0.0.1
 
    public:
     /**
      * @brief Construct a new ImageFormater object.
      * 
-     * @param[in] node The ros node handle.
+     * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    ImageFormater(ros::NodeHandle node);
+    ImageFormater(ros::NodeHandle node_handle);
 
     /**
      * @brief Destroy the ImageFormater object.
@@ -58,20 +62,20 @@ class ImageFormater {
     /**
      * @brief Rotate a image by 90, 180, 270 degrees.
      * 
-     * @param[in] src The input image.
-     * @param[out] dst The destination image.
+     * @param[in] source The input image.
+     * @param[out] destination The destination image.
      * @param[in] rotation The rotation value.
      * @since 0.0.1
      */
-    static void rotate_image(const cv::Mat src, cv::Mat& dst, const int rotation);
+    static void rotate_image(const cv::Mat source, cv::Mat& destination, const int rotation);
 
     /**
      * @brief The compressed image callback function.
      * 
-     * @param[in] msg The image message.
+     * @param[in] compressed_image_message The compressed image message.
      * @since 0.0.1
      */
-    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& msg);
+    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& compressed_image_message);
 
     /**
      * @brief Get the frame rate.
@@ -79,7 +83,7 @@ class ImageFormater {
      * @return float The frame rate.
      * @since 0.0.1
      */
-    float get_frame_rate();
+    float get_frame_rate() const;
 };
 
 #endif  // IMAGE_FORMATER_HPP

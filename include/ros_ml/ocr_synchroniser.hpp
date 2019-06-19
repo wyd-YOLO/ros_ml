@@ -31,30 +31,30 @@
  */
 class OCRSynchroniser {
    private:
-    ros::NodeHandle node_;  //!< @brief The ros node handle. @since 0.0.1
+    ros::NodeHandle node_handle_;  //!< @brief The ros node handle. @since 0.0.1
 
-    std::string tesseract_image_mod_topic_;    //!< @brief The modularised TesseractOCR image topic. @since 0.0.1
-    ros::Subscriber tesseract_image_mod_sub_;  //!< @brief The modularised TesseractOCR image subscriber. @since 0.0.1
-    ros::Time latest_image_stamp_;             //!< @brief The latest timestamp of the TesseractOCR image. @since 0.0.1
+    std::string modularised_image_topic_;           //!< @brief The modularised TesseractOCR image topic. @since 0.0.1
+    ros::Subscriber modularised_image_subscriber_;  //!< @brief The modularised TesseractOCR image subscriber. @since 0.0.1
+    ros::Time latest_image_timestamp_;              //!< @brief The latest timestamp of the TesseractOCR image. @since 0.0.1
 
-    std::string tesseract_result_mod_topic_;    //!< @brief The modularised TesseractOCR result topic. @since 0.0.1
-    ros::Subscriber tesseract_result_mod_sub_;  //!< @brief The modularised TesseractOCR result subscriber. @since 0.0.1
-    ros::Time latest_result_stamp_;             //!< @brief The latest timestamp of the TesseractOCR result. @since 0.0.1
+    std::string modularised_result_topic_;           //!< @brief The modularised TesseractOCR result topic. @since 0.0.1
+    ros::Subscriber modularised_result_subscriber_;  //!< @brief The modularised TesseractOCR result subscriber. @since 0.0.1
+    ros::Time latest_result_timestamp_;              //!< @brief The latest timestamp of the TesseractOCR result. @since 0.0.1
 
-    std::string tesseract_image_syn_topic_;               //!< @brief The synchronised TesseractOCR image topic. @since 0.0.1
-    image_transport::Publisher tesseract_image_syn_pub_;  //!< @brief The synchronised TesseractOCR image publisher. @since 0.0.1
+    std::string synchronised_image_topic_;                     //!< @brief The synchronised TesseractOCR image topic. @since 0.0.1
+    image_transport::Publisher synchronised_image_publisher_;  //!< @brief The synchronised TesseractOCR image publisher. @since 0.0.1
 
-    std::string tesseract_result_syn_topic_;   //!< @brief The synchronised TesseractOCR result topic. @since 0.0.1
-    ros::Publisher tesseract_result_syn_pub_;  //!< @brief The synchronised TesseractOCR result publisher. @since 0.0.1
+    std::string synchronised_result_topic_;         //!< @brief The synchronised TesseractOCR result topic. @since 0.0.1
+    ros::Publisher synchronised_result_publisher_;  //!< @brief The synchronised TesseractOCR result publisher. @since 0.0.1
 
    public:
     /**
      * @brief Construct a new OCRSynchroniser object.
      * 
-     * @param[in] node The ros node handle.
+     * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    OCRSynchroniser(ros::NodeHandle node);
+    OCRSynchroniser(ros::NodeHandle node_handle);
 
     /**
      * @brief Destroy the OCRSynchroniser object.
@@ -67,18 +67,18 @@ class OCRSynchroniser {
     /**
      * @brief The TesseractOCR image synchroniser.
      * 
-     * @param[in] img_msg The modularised TesseractOCR image.
+     * @param[in] image_message The modularised TesseractOCR image.
      * @since 0.0.1
      */
-    void tesseract_image_callback(const sensor_msgs::ImageConstPtr& img_msg);
+    void tesseract_image_callback(const sensor_msgs::ImageConstPtr& image_message);
 
     /**
      * @brief The TesseractOCR image synchroniser.
      * 
-     * @param[in] result_msg The modularised TesseractOCR result.
+     * @param[in] ocr_result_message The modularised TesseractOCR result.
      * @since 0.0.1
      */
-    void tesseract_result_callback(const ros_ml::OCRResultConstPtr& result_msg);
+    void tesseract_result_callback(const ros_ml::OCRResultConstPtr& ocr_result_message);
 };
 
 #endif  // OCR_SYNCHRONISER_HPP

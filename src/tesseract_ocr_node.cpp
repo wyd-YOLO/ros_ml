@@ -20,9 +20,8 @@
  */
 int main(int argc, char** argv) {
     ros::init(argc, argv, "tesseract_orc");
-    ros::NodeHandle node("~");
-    TesseractOCR tesseract_ocr(node);
-
+    ros::NodeHandle node_handle("~");
+    TesseractOCR tesseract_ocr(node_handle);
     ros::spin();
     return 0;
 }

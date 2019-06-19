@@ -20,14 +20,13 @@
  */
 int main(int argc, char** argv) {
     ros::init(argc, argv, "image_formater");
-    ros::NodeHandle node("~");
-    ImageFormater image_formater(node);
+    ros::NodeHandle node_handle("~");
+    ImageFormater image_formater(node_handle);
 
-    ros::Rate frame_rate(image_formater.get_frame_rate());
-
+    ros::Rate rate(image_formater.get_frame_rate());
     while (ros::ok()) {
         ros::spinOnce();
-        frame_rate.sleep();
+        rate.sleep();
     }
     return 0;
 }

@@ -20,9 +20,8 @@
  */
 int main(int argc, char** argv) {
     ros::init(argc, argv, "tesseract_orc");
-    ros::NodeHandle node("~");
-    ImageRectifier image_rectifier(node);
-
+    ros::NodeHandle node_handle("~");
+    ImageRectifier image_rectifier(node_handle);
     ros::spin();
     return 0;
 }
