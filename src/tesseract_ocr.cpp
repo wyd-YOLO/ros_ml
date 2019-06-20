@@ -54,7 +54,7 @@ void TesseractOCR::yolo_callback(const sensor_msgs::ImageConstPtr& image_message
     ros_ml::OCRResult ocr_result_message;
 
     // For each location got from the YOLO detection result
-    for (int i_l = 0; i_l < yolo_result_message->giant_locations.size(); ++i_l) {
+    for (size_t i_l = 0; i_l < yolo_result_message->giant_locations.size(); ++i_l) {
         std::string output;
         std::vector<cv::Rect> boxes;
         std::vector<std::string> words;
@@ -68,15 +68,15 @@ void TesseractOCR::yolo_callback(const sensor_msgs::ImageConstPtr& image_message
         ocr_tesseract_ptr_->run(cropped_image, output, &boxes, &words, &confidences, cv::text::OCR_LEVEL_WORD);
 
         // Filter the OCRTesseract output to get the location
-        for (int w = 0; w < words.size(); ++w) {
+        for (size_t w = 0; w < words.size(); ++w) {
             std::string word = words[w];
             if (word.length() >= 8) {
                 // Find the two positions of '-' letters
                 int first_position = 0, second_position = 0;
-                for (int i = 0; i < word.length(); ++i) {
+                for (size_t i = 0; i < word.length(); ++i) {
                     if (word.c_str()[i] == '-') {
                         first_position = i;
-                        for (int j = i + 1; j < word.length(); ++j) {
+                        for (size_t j = i + 1; j < word.length(); ++j) {
                             if (word.c_str()[j] == '-') {
                                 second_position = j;
                                 break;
@@ -91,7 +91,7 @@ void TesseractOCR::yolo_callback(const sensor_msgs::ImageConstPtr& image_message
                 if (second_position - first_position == 2 && first_position >= 4) {
                     std::string result = word.substr(first_position - 4, 8);
                     bool is_a_good_result = true;
-                    for (int i = 0; i < word.length(); ++i) {
+                    for (size_t i = 0; i < word.length(); ++i) {
                         if (result.c_str()[i] == ' ') {
                             is_a_good_result = false;
                         }
@@ -113,21 +113,21 @@ void TesseractOCR::yolo_callback(const sensor_msgs::ImageConstPtr& image_message
     }
 
     // Draw the YOLO detection result for giant locations
-    for (int i = 0; i < yolo_result_message->giant_locations.size(); ++i) {
+    for (size_t i = 0; i < yolo_result_message->giant_locations.size(); ++i) {
         cv::Point top_left = cv::Point(yolo_result_message->giant_locations[i].tl.x, yolo_result_message->giant_locations[i].tl.y);
         cv::Point bottom_right = cv::Point(yolo_result_message->giant_locations[i].br.x, yolo_result_message->giant_locations[i].br.y);
         cv::rectangle(image, top_left, bottom_right, cv::Scalar(255, 0, 0), 2);
     }
 
     // Draw the YOLO detection result for qr tags
-    for (int i = 0; i < yolo_result_message->qr_tags.size(); ++i) {
+    for (size_t i = 0; i < yolo_result_message->qr_tags.size(); ++i) {
         cv::Point top_left = cv::Point(yolo_result_message->qr_tags[i].tl.x, yolo_result_message->qr_tags[i].tl.y);
         cv::Point bottom_right = cv::Point(yolo_result_message->qr_tags[i].br.x, yolo_result_message->qr_tags[i].br.y);
         cv::rectangle(image, top_left, bottom_right, cv::Scalar(0, 0, 255), 2);
     }
 
     // Draw the TesseractOCR result for giant locaitons
-    for (int i = 0; i < ocr_result_message.giant_locations.size(); ++i) {
+    for (size_t i = 0; i < ocr_result_message.giant_locations.size(); ++i) {
         cv::Point top_left = cv::Point(ocr_result_message.giant_locations[i].tl.x, ocr_result_message.giant_locations[i].tl.y);
         cv::Point bottom_right = cv::Point(ocr_result_message.giant_locations[i].br.x, ocr_result_message.giant_locations[i].br.y);
         cv::rectangle(image, top_left, bottom_right, cv::Scalar(0, 255, 0), 2);
