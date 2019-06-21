@@ -1,19 +1,17 @@
 cmake_minimum_required(VERSION 3.1)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 project(ros_ml)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+## Compile with the highest warning level
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-
-find_package(OpenCV 3.4 REQUIRED)
-
 find_package(catkin REQUIRED
              COMPONENTS cv_bridge
                         image_transport
@@ -24,7 +22,7 @@ find_package(catkin REQUIRED
                         std_msgs)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV 3.4 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -109,17 +107,13 @@ generate_messages(DEPENDENCIES std_msgs)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(#  INCLUDE_DIRS include
-               #  LIBRARIES ros_ml
-               CATKIN_DEPENDS
+catkin_package(CATKIN_DEPENDS
                cv_bridge
                image_transport
                message_filters
                roscpp
                rospy
-               std_msgs
-               #  DEPENDS system_lib
-               )
+               std_msgs)
 
 ###########
 ## Build ##
@@ -127,8 +121,7 @@ catkin_package(#  INCLUDE_DIRS include
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(# include
-                    ${catkin_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include)
+include_directories(${catkin_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -144,6 +137,18 @@ include_directories(# include
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/ros_ml_node.cpp)
+add_executable(image_formater_node src/image_formater.cpp
+                                   src/image_formater_node.cpp)
+
+add_executable(image_rectifier_node src/image_formater.cpp
+                                    src/image_rectifier.cpp
+                                    src/image_rectifier_node.cpp)
+
+add_executable(ocr_synchroniser_node src/ocr_synchroniser.cpp
+                                     src/ocr_synchroniser_node.cpp)
+
+add_executable(tesseract_ocr_node src/tesseract_ocr.cpp
+                                  src/tesseract_ocr_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -159,22 +164,12 @@ include_directories(# include
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-
-add_executable(image_formater_node src/image_formater.cpp
-                                   src/image_formater_node.cpp)
 target_link_libraries(image_formater_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(image_rectifier_node src/image_formater.cpp
-                                    src/image_rectifier.cpp
-                                    src/image_rectifier_node.cpp)
 target_link_libraries(image_rectifier_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(ocr_synchroniser_node src/ocr_synchroniser.cpp
-                                     src/ocr_synchroniser_node.cpp)
 target_link_libraries(ocr_synchroniser_node ${catkin_LIBRARIES})
 
-add_executable(tesseract_ocr_node src/tesseract_ocr.cpp
-                                  src/tesseract_ocr_node.cpp)
 target_link_libraries(tesseract_ocr_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
@@ -190,7 +185,6 @@ target_link_libraries(tesseract_ocr_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-
 install(PROGRAMS scripts/yolo_detection_node.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
@@ -200,7 +194,6 @@ install(PROGRAMS scripts/yolo_detection_node.py
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-
 install(TARGETS image_formater_node
                 image_rectifier_node
                 ocr_synchroniser_node
@@ -220,7 +213,6 @@ install(TARGETS image_formater_node
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
-
 install(FILES launch/image_formater_node.launch
               launch/image_rectifier_node.launch
               launch/ocr_synchroniser_node.launch
