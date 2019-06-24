@@ -111,6 +111,7 @@ catkin_package(CATKIN_DEPENDS
                cv_bridge
                image_transport
                message_filters
+               message_runtime
                roscpp
                rospy
                std_msgs)
