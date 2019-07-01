@@ -49,7 +49,7 @@ class ImageFormater {
      * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    ImageFormater(ros::NodeHandle node_handle);
+    ImageFormater(ros::NodeHandle& node_handle);
 
     /**
      * @brief Destroy the ImageFormater object.
@@ -67,15 +67,15 @@ class ImageFormater {
      * @param[in] rotation The rotation value.
      * @since 0.0.1
      */
-    static void rotate_image(const cv::Mat source, cv::Mat& destination, const int rotation);
+    static void rotate_image(const cv::Mat& source, cv::Mat& destination, const int& rotation);
 
     /**
      * @brief The compressed image callback function.
      * 
-     * @param[in] compressed_image_message The compressed image message.
+     * @param[in] compressed_image_message_ptr The compressed image message.
      * @since 0.0.1
      */
-    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& compressed_image_message);
+    void compressed_image_callback(const sensor_msgs::CompressedImage::ConstPtr& compressed_image_message_ptr);
 
     /**
      * @brief Get the frame rate.

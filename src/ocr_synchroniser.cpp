@@ -10,7 +10,7 @@
 
 #include "ros_ml/ocr_synchroniser.hpp"
 
-OCRSynchroniser::OCRSynchroniser(ros::NodeHandle node_handle)
+OCRSynchroniser::OCRSynchroniser(ros::NodeHandle& node_handle)
     : node_handle_(node_handle) {
     // Initialise the modularised TesseractOCR image subscriber
     node_handle_.param<std::string>("tesseract_image_mod_topic", modularised_image_topic_, "tesseract_ocr_image_mod");
@@ -38,18 +38,18 @@ OCRSynchroniser::~OCRSynchroniser() {
     ros::shutdown();
 }
 
-void OCRSynchroniser::tesseract_image_callback(const sensor_msgs::ImageConstPtr& image_message) {
-    ros::Time current_image_stamp = image_message->header.stamp;
+void OCRSynchroniser::tesseract_image_callback(const sensor_msgs::Image::ConstPtr& modularised_image_message_ptr) {
+    ros::Time current_image_stamp = modularised_image_message_ptr->header.stamp;
     if (current_image_stamp > latest_image_timestamp_) {
-        synchronised_image_publisher_.publish(image_message);
+        synchronised_image_publisher_.publish(modularised_image_message_ptr);
         latest_image_timestamp_ = current_image_stamp;
     }
 }
 
-void OCRSynchroniser::tesseract_result_callback(const ros_ml::OCRResultConstPtr& ocr_result_message) {
-    ros::Time current_result_stamp = ocr_result_message->header.stamp;
+void OCRSynchroniser::tesseract_result_callback(const ros_ml::OCRResult::ConstPtr& modularised_result_message_ptr) {
+    ros::Time current_result_stamp = modularised_result_message_ptr->header.stamp;
     if (current_result_stamp > latest_result_timestamp_) {
-        synchronised_result_publisher_.publish(ocr_result_message);
+        synchronised_result_publisher_.publish(modularised_result_message_ptr);
         latest_result_timestamp_ = current_result_stamp;
     }
 }

@@ -63,7 +63,7 @@ class TesseractOCR {
      * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    TesseractOCR(ros::NodeHandle node_handle);
+    TesseractOCR(ros::NodeHandle& node_handle);
 
     /**
      * @brief Destroy the TesseractOCR object.
@@ -76,11 +76,11 @@ class TesseractOCR {
     /**
      * @brief The YOLO callback function.
      * 
-     * @param[in] image_message The YOLO detection image.
-     * @param[in] yolo_result_message The YOLO detection result.
+     * @param[in] image_message_ptr The YOLO detection image.
+     * @param[in] yolo_result_message_ptr The YOLO detection result.
      * @since 0.0.1
      */
-    void yolo_callback(const sensor_msgs::ImageConstPtr& image_message, const ros_ml::YoloResultConstPtr& yolo_result_message);
+    void yolo_callback(const sensor_msgs::Image::ConstPtr& image_message_ptr, const ros_ml::YoloResult::ConstPtr& yolo_result_message_ptr);
 };
 
 #endif  // TESSERACT_OCR_HPP

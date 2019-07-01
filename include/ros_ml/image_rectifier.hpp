@@ -51,7 +51,7 @@ class ImageRectifier {
      * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    ImageRectifier(ros::NodeHandle node_handle);
+    ImageRectifier(ros::NodeHandle& node_handle);
 
     /**
      * @brief Destroy the ImageRectifier object.
@@ -64,10 +64,10 @@ class ImageRectifier {
     /**
      * @brief The compressed image callback function.
      * 
-     * @param[in] compressed_image_message The image message.
+     * @param[in] compressed_image_message_ptr The image message.
      * @since 0.0.1
      */
-    void compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& compressed_image_message);
+    void compressed_image_callback(const sensor_msgs::CompressedImage::ConstPtr& compressed_image_message_ptr);
 };
 
 #endif  // IMAGE_RECTIFIER_HPP

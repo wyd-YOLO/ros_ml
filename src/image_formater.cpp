@@ -10,7 +10,7 @@
 
 #include "ros_ml/image_formater.hpp"
 
-ImageFormater::ImageFormater(ros::NodeHandle node_handle)
+ImageFormater::ImageFormater(ros::NodeHandle& node_handle)
     : node_handle_(node_handle) {
     // Innitialise the image subscriber
     node_handle_.param<std::string>("image_topic", image_topic_, "image_raw");
@@ -44,7 +44,7 @@ ImageFormater::~ImageFormater() {
     ros::shutdown();
 }
 
-void ImageFormater::rotate_image(const cv::Mat source, cv::Mat& destination, const int rotation) {
+void ImageFormater::rotate_image(const cv::Mat& source, cv::Mat& destination, const int& rotation) {
     if (rotation == 1) {
         cv::transpose(source, destination);
         cv::flip(destination, destination, 1);
@@ -58,10 +58,10 @@ void ImageFormater::rotate_image(const cv::Mat source, cv::Mat& destination, con
     }
 }
 
-void ImageFormater::compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& compressed_image_message) {
+void ImageFormater::compressed_image_callback(const sensor_msgs::CompressedImage::ConstPtr& compressed_image_message_ptr) {
     cv::Mat image;
     try {
-        image = cv::imdecode(cv::Mat(compressed_image_message->data), 0);
+        image = cv::imdecode(cv::Mat(compressed_image_message_ptr->data), 0);
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("Could not decode the image!");
     }

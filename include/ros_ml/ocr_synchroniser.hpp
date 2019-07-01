@@ -54,7 +54,7 @@ class OCRSynchroniser {
      * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    OCRSynchroniser(ros::NodeHandle node_handle);
+    OCRSynchroniser(ros::NodeHandle& node_handle);
 
     /**
      * @brief Destroy the OCRSynchroniser object.
@@ -67,18 +67,18 @@ class OCRSynchroniser {
     /**
      * @brief The TesseractOCR image synchroniser.
      * 
-     * @param[in] image_message The modularised TesseractOCR image.
+     * @param[in] modularised_image_message_ptr The modularised TesseractOCR image.
      * @since 0.0.1
      */
-    void tesseract_image_callback(const sensor_msgs::ImageConstPtr& image_message);
+    void tesseract_image_callback(const sensor_msgs::Image::ConstPtr& modularised_image_message_ptr);
 
     /**
      * @brief The TesseractOCR image synchroniser.
      * 
-     * @param[in] ocr_result_message The modularised TesseractOCR result.
+     * @param[in] modularised_result_message_ptr The modularised TesseractOCR result.
      * @since 0.0.1
      */
-    void tesseract_result_callback(const ros_ml::OCRResultConstPtr& ocr_result_message);
+    void tesseract_result_callback(const ros_ml::OCRResult::ConstPtr& modularised_result_message_ptr);
 };
 
 #endif  // OCR_SYNCHRONISER_HPP

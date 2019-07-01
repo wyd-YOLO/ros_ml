@@ -10,7 +10,7 @@
 
 #include "ros_ml/image_rectifier.hpp"
 
-ImageRectifier::ImageRectifier(ros::NodeHandle node_handle)
+ImageRectifier::ImageRectifier(ros::NodeHandle& node_handle)
     : node_handle_(node_handle) {
     // Initialise the distorted image subscriber
     node_handle_.param<std::string>("image_dis_topic", distorted_image_topic_, "image_raw/compressed");
@@ -36,11 +36,11 @@ ImageRectifier::~ImageRectifier() {
     ros::shutdown();
 }
 
-void ImageRectifier::compressed_image_callback(const sensor_msgs::CompressedImageConstPtr& compressed_image_message) {
+void ImageRectifier::compressed_image_callback(const sensor_msgs::CompressedImage::ConstPtr& compressed_image_message_ptr) {
     // Decode the image message
     cv::Mat image;
     try {
-        image = cv::imdecode(cv::Mat(compressed_image_message->data), 0);
+        image = cv::imdecode(cv::Mat(compressed_image_message_ptr->data), 0);
     } catch (cv_bridge::Exception& e) {
         ROS_ERROR("ImageRectifier::compressed_image_callback: Could not decode the image message.");
     }
@@ -61,6 +61,6 @@ void ImageRectifier::compressed_image_callback(const sensor_msgs::CompressedImag
     // Publish the rectified image
     sensor_msgs::ImagePtr rectified_image_message;
     rectified_image_message = cv_bridge::CvImage(std_msgs::Header(), "mono8", rectified_image).toImageMsg();
-    rectified_image_message->header.stamp = compressed_image_message->header.stamp;
+    rectified_image_message->header.stamp = compressed_image_message_ptr->header.stamp;
     rectified_image_publisher_.publish(rectified_image_message);
 }
