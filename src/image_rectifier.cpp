@@ -10,8 +10,9 @@
 
 #include "ros_ml/image_rectifier.hpp"
 
-ImageRectifier::ImageRectifier(ros::NodeHandle& node_handle)
-    : node_handle_(node_handle) {
+ImageRectifier::ImageRectifier(const ros::NodeHandle& node_handle)
+    : node_handle_(node_handle)
+{
     // Initialise the distorted image subscriber
     node_handle_.param<std::string>("image_dis_topic", distorted_image_topic_, "image_raw/compressed");
     distorted_image_subscriber_ = node_handle_.subscribe(distorted_image_topic_, 1, &ImageRectifier::compressed_image_callback, this);
@@ -32,19 +33,25 @@ ImageRectifier::ImageRectifier(ros::NodeHandle& node_handle)
     node_handle_.param<int>("rotation", rotation_, 0);
 }
 
-ImageRectifier::~ImageRectifier() {
+ImageRectifier::~ImageRectifier()
+{
     ros::shutdown();
 }
 
-void ImageRectifier::compressed_image_callback(const sensor_msgs::CompressedImage::ConstPtr& compressed_image_message_ptr) {
+void ImageRectifier::compressed_image_callback(const sensor_msgs::CompressedImage::ConstPtr& compressed_image_message_ptr)
+{
     // Decode the image message
     cv::Mat image;
-    try {
+    try
+    {
         image = cv::imdecode(cv::Mat(compressed_image_message_ptr->data), 0);
-    } catch (cv_bridge::Exception& e) {
+    }
+    catch (cv_bridge::Exception& e)
+    {
         ROS_ERROR("ImageRectifier::compressed_image_callback: Could not decode the image message.");
     }
-    if (!image.data) {
+    if (!image.data)
+    {
         printf("ImageRectifier::compressed_image_callback: Empty image data.\n");
         return;
     }
@@ -54,7 +61,8 @@ void ImageRectifier::compressed_image_callback(const sensor_msgs::CompressedImag
     cv::remap(image, rectified_image, undistortion_map_1_, undistortion_map_2_, cv::INTER_LINEAR, cv::BORDER_CONSTANT);
 
     // Rotate the image
-    if (rotation_ != 0) {
+    if (rotation_ != 0)
+    {
         ImageFormater::rotate_image(rectified_image, rectified_image, rotation_);
     }
 

@@ -18,7 +18,8 @@
  * @return The status value.
  * @since 0.0.1
  */
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     ros::init(argc, argv, "tesseract_orc");
     ros::NodeHandle node_handle("~");
     TesseractOCR tesseract_ocr(node_handle);

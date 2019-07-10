@@ -12,13 +12,13 @@
 #define IMAGE_FORMATER_HPP
 
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <boost/filesystem.hpp>
-
-#include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
+#include <ros/ros.h>
+
 #include <opencv2/highgui/highgui.hpp>
 
 /**
@@ -27,29 +27,30 @@
  * @since 0.0.1
  * 
  */
-class ImageFormater {
-   private:
-    ros::NodeHandle node_handle_;  //!< @brief The ros node handle. @since 0.0.1
+class ImageFormater
+{
+private:
+    ros::NodeHandle node_handle_; //!< @brief The ros node handle. @since 0.0.1
 
-    std::string image_topic_;           //!< @brief The image topic. @since 0.0.1
-    ros::Subscriber image_subscriber_;  //!< @brief The image subscriber. @since 0.0.1
+    std::string image_topic_;          //!< @brief The image topic. @since 0.0.1
+    ros::Subscriber image_subscriber_; //!< @brief The image subscriber. @since 0.0.1
 
-    float frame_rate_;  //!< @brief The frame rate. @since 0.0.1
+    float frame_rate_; //!< @brief The frame rate. @since 0.0.1
 
-    int rotation_;  //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
+    int rotation_; //!< @brief The camera rotation in [0, 1, 2, 3] <-> [0, 90, 180, 270]. @since 0.0.1
 
-    int start_index_;  //!< @brief The start index. @since 0.0.1
+    int start_index_; //!< @brief The start index. @since 0.0.1
 
-    std::string save_directory_;  //!< @brief The saving dicrectory. @since 0.0.1
+    std::string save_directory_; //!< @brief The saving dicrectory. @since 0.0.1
 
-   public:
+public:
     /**
      * @brief Construct a new ImageFormater object.
      * 
      * @param[in] node_handle The ros node handle.
      * @since 0.0.1
      */
-    ImageFormater(ros::NodeHandle& node_handle);
+    ImageFormater(const ros::NodeHandle& node_handle);
 
     /**
      * @brief Destroy the ImageFormater object.
@@ -86,4 +87,4 @@ class ImageFormater {
     float get_frame_rate() const;
 };
 
-#endif  // IMAGE_FORMATER_HPP
+#endif // IMAGE_FORMATER_HPP

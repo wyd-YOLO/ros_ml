@@ -18,13 +18,15 @@
  * @return The status value.
  * @since 0.0.1
  */
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     ros::init(argc, argv, "image_formater");
     ros::NodeHandle node_handle("~");
     ImageFormater image_formater(node_handle);
 
     ros::Rate rate(image_formater.get_frame_rate());
-    while (ros::ok()) {
+    while (ros::ok())
+    {
         ros::spinOnce();
         rate.sleep();
     }
