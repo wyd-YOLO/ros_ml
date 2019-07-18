@@ -33,6 +33,10 @@ TesseractOCR::TesseractOCR(const ros::NodeHandle& node_handle)
     image_transport::ImageTransport image_transport(node_handle_);
     modularised_image_publisher_ = image_transport.advertise(modularised_image_topic_, 1);
 
+    // Initialise the debug image publisher
+    image_transport::ImageTransport debug_image_transport(node_handle_);
+    debug_image_publisher_ = debug_image_transport.advertise("debug_image", 1);
+
     // Initialise the modularised TesseractOCR result publisher
     node_handle_.param<std::string>("tesseract_result_mod_topic", modularised_result_topic_, "tesseract_ocr_result_mod");
     modularised_result_publisher_ = node_handle_.advertise<ros_ml::OCRResult>(modularised_result_topic_, 1);
@@ -70,6 +74,39 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
                       cv::Point(yolo_result_message_ptr->giant_locations[i_l].br.x, yolo_result_message_ptr->giant_locations[i_l].br.y));
         cv::Mat cropped_image = image(rect).clone();
         cv::cvtColor(cropped_image, cropped_image, cv::COLOR_BGR2GRAY);
+        cv::Mat canny_image;
+        cv::Canny(cropped_image, canny_image, 25, 50);
+
+        std::vector<cv::Vec4i> lines;
+        cv::HoughLinesP(canny_image, lines, 1, CV_PI / 720, 50, 50, 3);
+        std::cout << "lines count " << lines.size() << "\n";
+        std::sort(lines.begin(), lines.end(), [](const cv::Vec4i& line_1, const cv::Vec4i& line_2) {
+            int d_1_x = line_1[2] - line_1[0];
+            int d_1_y = line_1[3] - line_1[1];
+            float length_1 = sqrt(d_1_x * d_1_x + d_1_y * d_1_y);
+            int d_2_x = line_2[2] - line_2[0];
+            int d_2_y = line_2[3] - line_2[1];
+            float length_2 = sqrt(d_2_x * d_2_x + d_2_y * d_2_y);
+            return (length_1 > length_2);
+        });
+        if (lines.size())
+        {
+            cv::line(canny_image, cv::Point(lines[0][0], lines[0][1]), cv::Point(lines[0][2], lines[0][3]), 255, 2, 8, 0);
+            float d_x = lines[0][2] - lines[0][0];
+            float d_y = lines[0][3] - lines[0][1];
+            float length = sqrt(d_x * d_x + d_y * d_y);
+            float cos_line = d_x / length;
+            if (abs(cos_line) > 0.9)
+            {
+                // A good line
+            }
+        }
+
+        // Publish the debug image
+        sensor_msgs::ImagePtr debug_image_message;
+        debug_image_message = cv_bridge::CvImage(std_msgs::Header(), "mono8", canny_image).toImageMsg();
+        debug_image_message->header.stamp = image_message_ptr->header.stamp;
+        debug_image_publisher_.publish(debug_image_message);
 
         // Run the OCRTesseract
         ocr_tesseract_ptr_->run(cropped_image, output, &boxes, &words, &confidences, cv::text::OCR_LEVEL_WORD);

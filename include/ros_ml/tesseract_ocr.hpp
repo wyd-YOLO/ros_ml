@@ -55,6 +55,8 @@ private:
     std::string modularised_image_topic_;                    //!< @brief The modularised TesseractOCR image topic. @since 0.0.1
     image_transport::Publisher modularised_image_publisher_; //!< @brief The modularised TesseractOCR image publisher. @since 0.0.1
 
+    image_transport::Publisher debug_image_publisher_; //!< @brief The debug image publisher. @since 0.0.1
+
     std::string modularised_result_topic_;        //!< @brief The modularised TesseractOCR result topic. @since 0.0.1
     ros::Publisher modularised_result_publisher_; //!< @brief The modularised TesseractOCR result publisher. @since 0.0.1
 
