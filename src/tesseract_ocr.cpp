@@ -110,6 +110,10 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
             }
         }
 
+        // Apply re-scaling for location label
+        float ratio = 80.0f / cropped_image.rows;
+        cv::resize(cropped_image, cropped_image, cv::Size(), ratio, ratio);
+
         // Publish the debug image
         sensor_msgs::ImagePtr debug_image_message;
         debug_image_message = cv_bridge::CvImage(std_msgs::Header(), "mono8", cropped_image).toImageMsg();
