@@ -113,6 +113,22 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
         // Apply re-scaling for location label
         float ratio = 80.0f / cropped_image.rows;
         cv::resize(cropped_image, cropped_image, cv::Size(), ratio, ratio);
+        size_t image_size = cropped_image.cols * cropped_image.rows;
+
+        // Apply kmeans clustering with intensity is the criterion
+        std::vector<float> intensities;
+        intensities.reserve(image_size);
+        for (size_t i = 0; i < image_size; ++i)
+        {
+            intensities.emplace_back(cropped_image.data[i]);
+        }
+        std::vector<int> labels;
+        std::vector<uchar> centres;
+        cv::kmeans(intensities, 2, labels, cv::TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 1000, 0.0001), 5, cv::KMEANS_PP_CENTERS, centres);
+        std::sort(centres.begin(), centres.end());
+
+        // Threshold the image with the intensities got from kmeans
+        cv::threshold(cropped_image, cropped_image, centres[0] * 0.7 + centres[1] * 0.3, 255, CV_THRESH_BINARY_INV);
 
         // Publish the debug image
         sensor_msgs::ImagePtr debug_image_message;
