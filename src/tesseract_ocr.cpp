@@ -128,7 +128,7 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
         std::sort(centres.begin(), centres.end());
 
         // Threshold the image with the intensities got from kmeans
-        cv::threshold(cropped_image, cropped_image, centres[0] * 0.7 + centres[1] * 0.3, 255, CV_THRESH_BINARY_INV);
+        cv::threshold(cropped_image, cropped_image, centres[0] * 0.8 + centres[1] * 0.2, 255, CV_THRESH_BINARY_INV);
 
         // Publish the debug image
         sensor_msgs::ImagePtr debug_image_message;
