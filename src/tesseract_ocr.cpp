@@ -70,8 +70,29 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
         std::vector<cv::Rect> boxes;
         std::vector<std::string> words;
         std::vector<float> confidences;
-        cv::Rect rect(cv::Point(yolo_result_message_ptr->giant_locations[i_l].tl.x, yolo_result_message_ptr->giant_locations[i_l].tl.y),
-                      cv::Point(yolo_result_message_ptr->giant_locations[i_l].br.x, yolo_result_message_ptr->giant_locations[i_l].br.y));
+
+        ros_ml::YoloObject yolo_object = yolo_result_message_ptr->giant_locations[i_l];
+        yolo_object.br.x = yolo_object.tl.x + (int)((yolo_object.br.x - yolo_object.tl.x) * 0.75);
+        int shift_left = 5;
+        if (yolo_object.tl.x - shift_left > 0)
+        {
+            yolo_object.tl.x = yolo_object.tl.x - shift_left;
+        }
+        else
+        {
+            yolo_object.tl.x = 0;
+        }
+        if (yolo_object.br.x - shift_left > 0)
+        {
+            yolo_object.br.x = yolo_object.br.x - shift_left;
+        }
+        else
+        {
+            yolo_object.br.x = 0;
+        }
+
+        cv::Rect rect(cv::Point(yolo_object.tl.x, yolo_object.tl.y),
+                      cv::Point(yolo_object.br.x, yolo_object.br.y));
         cv::Mat cropped_image = image(rect).clone();
         cv::cvtColor(cropped_image, cropped_image, cv::COLOR_BGR2GRAY);
         cv::Mat canny_image;
@@ -180,13 +201,13 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
                     if (is_a_good_result)
                     {
                         ros_ml::OCRObject ocr_object;
-                        ocr_object.yolo_confidence = yolo_result_message_ptr->giant_locations[i_l].confidence;
+                        ocr_object.yolo_confidence = yolo_object.confidence;
                         ocr_object.ocr_confidence = confidences[w] / 100.0f;
                         ocr_object.data = word.substr(first_position - 4, 8);
-                        ocr_object.tl.x = boxes[w].tl().x + yolo_result_message_ptr->giant_locations[i_l].tl.x;
-                        ocr_object.tl.y = boxes[w].tl().y + yolo_result_message_ptr->giant_locations[i_l].tl.y;
-                        ocr_object.br.x = boxes[w].br().x + yolo_result_message_ptr->giant_locations[i_l].tl.x;
-                        ocr_object.br.y = boxes[w].br().y + yolo_result_message_ptr->giant_locations[i_l].tl.y;
+                        ocr_object.tl.x = boxes[w].tl().x + yolo_object.tl.x;
+                        ocr_object.tl.y = boxes[w].tl().y + yolo_object.tl.y;
+                        ocr_object.br.x = boxes[w].br().x + yolo_object.tl.x;
+                        ocr_object.br.y = boxes[w].br().y + yolo_object.tl.y;
                         ocr_result_message.giant_locations.push_back(ocr_object);
                     }
                 }

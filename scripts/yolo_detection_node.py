@@ -119,16 +119,6 @@ class YOLODetection:
 
             # Add the box and confidence
             if label == "giant_location":
-                rect.br.x = rect.tl.x + int((rect.br.x - rect.tl.x) * 0.75)
-                shift_left = 5
-                if rect.tl.x - shift_left > 0:
-                    rect.tl.x = rect.tl.x - shift_left
-                else:
-                    rect.tl.x = 0
-                if rect.br.x - shift_left > 0:
-                    rect.br.x = rect.br.x - shift_left
-                else:
-                    rect.br.x = 0
                 giant_locations.append(rect)
             elif label == "qr_tag":
                 qr_tags.append(rect)
