@@ -72,27 +72,38 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
         std::vector<float> confidences;
 
         ros_ml::YoloObject yolo_object = yolo_result_message_ptr->giant_locations[i_l];
-        yolo_object.br.x = yolo_object.tl.x + (int)((yolo_object.br.x - yolo_object.tl.x) * 0.75);
-        int shift_left = 5;
-        if (yolo_object.tl.x - shift_left > 0)
-        {
-            yolo_object.tl.x = yolo_object.tl.x - shift_left;
-        }
-        else
-        {
-            yolo_object.tl.x = 0;
-        }
-        if (yolo_object.br.x - shift_left > 0)
-        {
-            yolo_object.br.x = yolo_object.br.x - shift_left;
-        }
-        else
-        {
-            yolo_object.br.x = 0;
-        }
+        // Find the black part in the location label
+        cv::Rect original_rect(cv::Point(yolo_object.tl.x, yolo_object.tl.y),
+                               cv::Point(yolo_object.br.x, yolo_object.br.y));
+        cv::Mat original_location_image = image(original_rect).clone();
+        cv::cvtColor(original_location_image, original_location_image, CV_BGR2GRAY);
 
-        cv::Rect rect(cv::Point(yolo_object.tl.x, yolo_object.tl.y),
-                      cv::Point(yolo_object.br.x, yolo_object.br.y));
+        int black_box_size = std::min(original_location_image.rows * 3 / 4, original_location_image.cols);
+        std::vector<int> intensity_vector(original_location_image.cols - black_box_size, 0);
+        for (size_t i = 0; i < original_location_image.cols - black_box_size; ++i)
+        {
+            for (size_t j = 0; j < original_location_image.rows; ++j)
+            {
+                for (int k = 0; k < black_box_size; ++k)
+                {
+                    intensity_vector[i] += original_location_image.data[j * original_location_image.cols + i + k];
+                }
+            }
+        }
+        int min_element_index = std::min_element(intensity_vector.begin(), intensity_vector.end()) - intensity_vector.begin();
+        std::cout << "\n";
+        std::cout << min_element_index << " " << intensity_vector.size() << "\n";
+
+        cv::Rect rect;
+        if (min_element_index > 10 && min_element_index < original_location_image.cols - 10)
+        {
+            rect = cv::Rect(std::min(std::max(yolo_object.tl.x + min_element_index - original_location_image.rows * 3, 0), image.cols - min_element_index - 1), yolo_object.tl.y, original_location_image.rows * 3, original_location_image.rows);
+        }
+        else
+        {
+            rect = cv::Rect(cv::Point(yolo_object.tl.x, yolo_object.tl.y),
+                            cv::Point(yolo_object.br.x, yolo_object.br.y));
+        }
         cv::Mat cropped_image = image(rect).clone();
         cv::cvtColor(cropped_image, cropped_image, cv::COLOR_BGR2GRAY);
         cv::Mat canny_image;
@@ -149,7 +160,7 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
         std::sort(centres.begin(), centres.end());
 
         // Threshold the image with the intensities got from kmeans
-        cv::threshold(cropped_image, cropped_image, centres[0] * 0.8 + centres[1] * 0.2, 255, CV_THRESH_BINARY_INV);
+        cv::threshold(cropped_image, cropped_image, centres[0] * 0.9 + centres[1] * 0.1, 255, CV_THRESH_BINARY_INV);
 
         // Publish the debug image
         sensor_msgs::ImagePtr debug_image_message;
