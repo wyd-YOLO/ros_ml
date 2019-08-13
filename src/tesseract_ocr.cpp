@@ -80,9 +80,9 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
 
         int black_box_size = std::min(original_location_image.rows * 3 / 4, original_location_image.cols);
         std::vector<int> intensity_vector(original_location_image.cols - black_box_size, 0);
-        for (size_t i = 0; i < original_location_image.cols - black_box_size; ++i)
+        for (int i = 0; i < original_location_image.cols - black_box_size; ++i)
         {
-            for (size_t j = 0; j < original_location_image.rows; ++j)
+            for (int j = 0; j < original_location_image.rows; ++j)
             {
                 for (int k = 0; k < black_box_size; ++k)
                 {
@@ -134,7 +134,6 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
             float cos_two_lines = d_x / length;
             if (cos_two_lines > 0.95)
             {
-                float d_height = d_y / d_x * rect.width;
                 cv::Point2f centre_point(rect.width / 2., rect.height / 2.);
                 cos_two_lines = acos(cos_two_lines) * 180.0 / M_PI;
                 cv::Mat rotation_matrix = cv::getRotationMatrix2D(centre_point, cos_two_lines, 1.0);
