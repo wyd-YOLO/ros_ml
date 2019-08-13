@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Run the tesseract_ocr_node_0 -->
+    <node name="qr_tag_scan_node" pkg="ros_ml" type="InfiniumScan" output="screen">
+        <!-- The YOLO detection image topic -->
+        <param name="yolo_image_topic" value="/yolo_detection_mod_0_image" />
+
+        <!-- The YOLO detection result topic -->
+        <param name="yolo_result_topic" value="/yolo_detection_mod_0_result" />
+
+        <!-- The TesseractOCR image topic -->
+        <param name="qr_tag_scan_image_topic" value="/qr_tag_scan_image" />
+
+        <!-- The TesseractOCR result topic -->
+        <param name="qr_tag_scan_result_topic" value="/qr_tag_scan_result" />
+    </node>
+
+</launch>

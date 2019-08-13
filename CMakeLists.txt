@@ -138,6 +138,12 @@ include_directories(${catkin_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include)
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/ros_ml_node.cpp)
+add_executable(InfiniumScan
+               src/infinium_scan_common.cpp
+               src/qr_tag_scan.cpp
+               src/qr_tag_scan_node.cpp
+               src/scandit_scanner.cpp)
+
 add_executable(image_formater_node src/image_formater.cpp
                                    src/image_formater_node.cpp)
 
@@ -165,6 +171,13 @@ add_executable(tesseract_ocr_node src/tesseract_ocr.cpp
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(InfiniumScan
+                      ${catkin_LIBRARIES}
+                      ${OpenCV_LIBS}
+                      pthread
+                      scanditsdk
+                      z)
+
 target_link_libraries(image_formater_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 target_link_libraries(image_rectifier_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
@@ -217,6 +230,7 @@ install(TARGETS image_formater_node
 install(FILES launch/image_formater_node.launch
               launch/image_rectifier_node.launch
               launch/ocr_synchroniser_node.launch
+              launch/qr_tag_scan_node.launch
               launch/tesseract_ocr_node.launch
               launch/yolo_detection_node.launch
               launch/yolo_detection_node_rect.launch
