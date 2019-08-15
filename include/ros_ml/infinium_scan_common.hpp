@@ -13,8 +13,8 @@
 
 #include <iostream>
 
-#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 /**
  * @brief The scandit SDK license key.
@@ -30,7 +30,8 @@
  * @since 0.3.2
  * 
  */
-namespace infinium_scan {
+namespace infinium_scan
+{
 
 /**
  * @brief This is to compute the Euclid distance between two given points.
@@ -104,6 +105,6 @@ cv::Point get_quadrangle_incentre(const cv::Point& point_1,
  */
 void rotate_image(const cv::Mat& source, cv::Mat& destination, const int& rotation);
 
-}  // namespace infinium_scan
+} // namespace infinium_scan
 
-#endif  // INFINIUM_SCAN_COMMON_HPP
+#endif // INFINIUM_SCAN_COMMON_HPP

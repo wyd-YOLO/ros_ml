@@ -21,15 +21,16 @@
  * @since 0.3.0
  * 
  */
-class ScanditScanner {
-   private:
-    ScRecognitionContext* context_ptr_;          //!< @brief The scandit context. @since 0.3.0
-    ScBarcodeScannerSettings* settings_ptr_;     //!< @brief The scandit settings. @since 0.3.0
-    ScBarcodeScanner* scanner_ptr_;              //!< @brief The scandit scanner. @since 0.3.0
-    ScBarcodeScannerSession* session_ptr_;       //!< @brief The scan session. @since 0.3.0
-    ScImageDescription* image_description_ptr_;  //!< @brief The image description. @since 0.3.0
+class ScanditScanner
+{
+private:
+    ScRecognitionContext* context_ptr_;         //!< @brief The scandit context. @since 0.3.0
+    ScBarcodeScannerSettings* settings_ptr_;    //!< @brief The scandit settings. @since 0.3.0
+    ScBarcodeScanner* scanner_ptr_;             //!< @brief The scandit scanner. @since 0.3.0
+    ScBarcodeScannerSession* session_ptr_;      //!< @brief The scan session. @since 0.3.0
+    ScImageDescription* image_description_ptr_; //!< @brief The image description. @since 0.3.0
 
-   public:
+public:
     /**
      * @brief Construct a new ScanditScanner object.
      * 
@@ -64,4 +65,4 @@ class ScanditScanner {
     ScBarcodeArray* scan_image(const uint8_t* image_data);
 };
 
-#endif  // SCANDIT_SCANNER_HPP
+#endif // SCANDIT_SCANNER_HPP
