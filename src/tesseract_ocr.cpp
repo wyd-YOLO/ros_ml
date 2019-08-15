@@ -114,11 +114,11 @@ void TesseractOCR::yolo_callback(const sensor_msgs::Image::ConstPtr& image_messa
         std::sort(lines.begin(), lines.end(), [](const cv::Vec4i& line_1, const cv::Vec4i& line_2) {
             int d_1_x = line_1[2] - line_1[0];
             int d_1_y = line_1[3] - line_1[1];
-            float length_1 = sqrt(d_1_x * d_1_x + d_1_y * d_1_y);
+            int squared_length_1 = d_1_x * d_1_x + d_1_y * d_1_y;
             int d_2_x = line_2[2] - line_2[0];
             int d_2_y = line_2[3] - line_2[1];
-            float length_2 = sqrt(d_2_x * d_2_x + d_2_y * d_2_y);
-            return (length_1 > length_2);
+            int squared_length_2 = d_2_x * d_2_x + d_2_y * d_2_y;
+            return (squared_length_1 > squared_length_2);
         });
         if (lines.size())
         {
