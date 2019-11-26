@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 """!@file yolo_detection_node.py
-@author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+@author Nguyen Quang <nqoptik@gmail.com>
 @brief The YOLO detection node class.
 @since 0.0.1
 

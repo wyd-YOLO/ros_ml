@@ -1,6 +1,6 @@
 /**
  * @file image_formater_node.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The image formater node.
  * @since 0.0.1
  * 

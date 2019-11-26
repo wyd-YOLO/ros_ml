@@ -1,6 +1,6 @@
 /**
  * @file qr_tag_scan_node.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The qr tag scan node.
  * @since 0.0.1
  * 

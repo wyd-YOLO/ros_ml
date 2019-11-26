@@ -1,6 +1,6 @@
 /**
  * @file tesseract_ocr_node.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The tesseract ocr node.
  * @since 0.0.1
  * 

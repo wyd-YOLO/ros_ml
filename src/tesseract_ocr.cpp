@@ -1,6 +1,6 @@
 /**
  * @file tesseract_ocr.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The definitions of the TesseractOCR class.
  * @since 0.0.1
  * 

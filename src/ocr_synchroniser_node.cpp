@@ -1,6 +1,6 @@
 /**
  * @file ocr_synchroniser_node.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The ocr synchroniser node.
  * @since 0.0.1
  * 

@@ -1,6 +1,6 @@
 /**
  * @file image_rectifier.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The definitions of the ImageRectifier class.
  * @since 0.0.1
  * 

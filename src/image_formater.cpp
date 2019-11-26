@@ -1,6 +1,6 @@
 /**
  * @file image_formater.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The definitions of the ImageFormater class.
  * @since 0.0.1
  * 

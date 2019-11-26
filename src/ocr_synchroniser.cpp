@@ -1,6 +1,6 @@
 /**
  * @file ocr_synchroniser.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The definitions of the OCRSynchroniser class.
  * @since 0.0.1
  * 

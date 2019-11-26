@@ -1,6 +1,6 @@
 /**
  * @file qr_tag_scan.cpp
- * @author Nguyen Quang <nguyenquang.emailbox@gmail.com>
+ * @author Nguyen Quang <nqoptik@gmail.com>
  * @brief The definitions of the QRTagScan class.
  * @since 0.0.1
  * 
